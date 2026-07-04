@@ -1,0 +1,2611 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المعهد المختص في التكوين المهني - الشهيد بن سعدة محمد</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- ==================== SUPABASE SDK ==================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Kufi Arabic',sans-serif}
+:root{--bg:#fff;--bg2:#f5f5f5;--bg3:#ebebeb;--text:#111;--text2:#444;--text3:#777;--border:#ccc;--border2:#ddd;--accent:#000;--accent-text:#fff;--radius:8px;--radius-lg:12px;}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+.page{display:none;min-height:100vh;flex-direction:column}
+.page.active{display:flex}
+nav{background:var(--accent);color:var(--accent-text);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #333}
+.nav-logo{font-size:16px;font-weight:700;line-height:1.3}
+.nav-logo small{font-size:11px;font-weight:300;opacity:0.7;display:block}
+button,.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:var(--radius);border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit}
+button:hover,.btn:hover{background:var(--bg3)}
+.btn-dark{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
+.btn-dark:hover{background:#333;border-color:#333}
+.btn-outline{background:transparent;border:1.5px solid rgba(255,255,255,0.6);color:#fff}
+.btn-outline:hover{background:rgba(255,255,255,0.15)}
+.btn-danger{background:#c00;color:#fff;border-color:#c00}
+.btn-danger:hover{background:#a00}
+.btn-green{background:#006600;color:#fff;border-color:#006600}
+.btn-green:hover{background:#004400}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-full{width:100%}
+.card{background:var(--bg);border:1.5px solid var(--border2);border-radius:var(--radius-lg);padding:20px}
+label{font-size:13px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500}
+input,select,textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:inherit;background:var(--bg);color:var(--text);transition:border-color .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+textarea{resize:vertical;min-height:80px}
+.form-group{margin-bottom:16px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid}
+.tag-lesson{background:#f0f0f0;color:#333;border-color:#ccc}
+.tag-solved{background:#e8f5e8;color:#006600;border-color:#99cc99}
+.tag-exercise{background:#fff3e0;color:#995500;border-color:#ffcc88}
+.tag-approved{background:#d4edda;color:#155724;border-color:#c3e6cb}
+.tag-sub{background:#e8f0fe;color:#1a3a8f;border-color:#b0c4f8}
+.tag-graded{background:#fff3cd;color:#856404;border-color:#ffc107}
+.hero{padding:60px 24px;text-align:center;border-bottom:1px solid var(--border2)}
+.hero h1{font-size:38px;font-weight:800;line-height:1.2;margin-bottom:12px}
+.hero p{font-size:16px;color:var(--text2);max-width:520px;margin:0 auto 28px;line-height:1.7}
+.hero-badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+.hero-badge{padding:6px 14px;border:1.5px solid var(--border);border-radius:20px;font-size:12px;font-weight:500;color:var(--text2)}
+.features{padding:48px 24px;max-width:800px;margin:0 auto;width:100%}
+.features h2{font-size:22px;font-weight:700;margin-bottom:24px;text-align:center}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+.feature-card{padding:20px;border:1.5px solid var(--border2);border-radius:var(--radius-lg);text-align:center}
+.feature-icon{font-size:28px;margin-bottom:10px}
+.feature-card h3{font-size:14px;font-weight:700;margin-bottom:6px}
+.feature-card p{font-size:12px;color:var(--text3);line-height:1.5}
+.login-section{padding:40px 24px;max-width:480px;margin:0 auto;width:100%}
+.login-section h2{font-size:20px;font-weight:700;margin-bottom:4px;text-align:center}
+.login-section .subtitle{font-size:13px;color:var(--text3);text-align:center;margin-bottom:24px}
+.tabs{display:flex;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
+.tab-btn{flex:1;padding:10px;font-size:13px;font-weight:500;border:none;background:var(--bg);cursor:pointer;transition:all .15s;font-family:inherit}
+.tab-btn.active{background:var(--accent);color:var(--accent-text)}
+.dash-header{background:var(--accent);color:var(--accent-text);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.dash-header h2{font-size:15px;font-weight:700}
+.dash-header p{font-size:11px;opacity:0.7;margin-top:2px}
+.dash-nav{display:flex;gap:4px;flex-wrap:wrap}
+.dash-nav-btn{padding:7px 14px;font-size:12px;font-weight:600;border:1.5px solid rgba(255,255,255,0.3);border-radius:var(--radius);background:transparent;color:#fff;cursor:pointer;transition:all .15s;font-family:inherit;position:relative}
+.dash-nav-btn:hover{background:rgba(255,255,255,0.15)}
+.dash-nav-btn.active{background:rgba(255,255,255,0.25);border-color:rgba(255,255,255,0.6)}
+.notif-dot{position:absolute;top:-5px;right:-5px;width:17px;height:17px;background:#e00;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff;border:2px solid #000}
+.dash-body{flex:1;overflow:auto;padding:24px;max-width:960px;margin:0 auto;width:100%}
+.dash-section{display:none}
+.dash-section.active{display:block}
+.content-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:16px}
+.content-card{border:1.5px solid var(--border2);border-radius:var(--radius-lg);padding:16px;cursor:pointer;transition:all .15s;background:var(--bg)}
+.content-card:hover{border-color:var(--accent);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.content-card h4{font-size:14px;font-weight:700;line-height:1.4;margin-bottom:6px}
+.content-card .meta{font-size:11px;color:var(--text3)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:100;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg);border-radius:var(--radius-lg);padding:24px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;border:1.5px solid var(--border)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border2)}
+.modal-header h3{font-size:17px;font-weight:700}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text3);padding:2px 8px;line-height:1}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:12px 24px;border-radius:var(--radius);font-size:13px;font-weight:600;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.toast.error{background:#c00}
+.toast.ok{background:#006600}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.filter-pill{padding:6px 14px;border:1.5px solid var(--border);border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;background:var(--bg);transition:all .15s}
+.filter-pill.active{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{padding:10px 12px;text-align:right;background:var(--bg2);border-bottom:1.5px solid var(--border);font-weight:600;font-size:12px;color:var(--text2)}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--border2);vertical-align:middle}
+.data-table tr:hover td{background:var(--bg2)}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{padding:16px;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border2);text-align:center}
+.stat-card .num{font-size:26px;font-weight:800}
+.stat-card .lbl{font-size:11px;color:var(--text3);margin-top:2px}
+.empty{text-align:center;padding:40px 24px;color:var(--text3)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.empty p{font-size:14px}
+.divider{border:none;border-top:1px solid var(--border2);margin:20px 0}
+.section-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.checkbox-group{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.checkbox-item{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px}
+.checkbox-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:var(--bg3);color:var(--text2)}
+.sub-item{border:1.5px solid var(--border2);border-radius:var(--radius-lg);padding:16px;margin-bottom:12px;background:var(--bg)}
+.sub-item.new-item{border-color:#000;border-width:2px}
+.sub-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px}
+.sub-answer{background:var(--bg2);border-radius:var(--radius);padding:12px;font-size:13px;line-height:1.7;color:var(--text2);white-space:pre-wrap;margin:10px 0;border-right:3px solid #ccc}
+.grade-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-top:10px}
+.score-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-weight:700;font-size:13px}
+.score-high{background:#e8f5e8;color:#006600;border:1px solid #99cc99}
+.score-mid{background:#fff3cd;color:#856404;border:1px solid #ffc107}
+.score-low{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@media(max-width:600px){.hero h1{font-size:26px}.form-row{grid-template-columns:1fr}.content-grid{grid-template-columns:1fr}.dash-nav-btn{padding:6px 10px;font-size:11px}}
+
+/* === PASSWORD TOGGLE === */
+.password-field{position:relative}
+.password-field input{padding-left:42px}
+.pw-toggle{position:absolute;left:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:4px;color:var(--text3);line-height:1}
+.pw-toggle:hover{color:var(--text)}
+
+/* === DEADLINE === */
+.deadline-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.deadline-presets button{padding:6px 12px;font-size:12px}
+.deadline-timer{font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;display:inline-block}
+.deadline-open{background:#e8f5e8;color:#006600;border:1px solid #99cc99}
+.deadline-soon{background:#fff3cd;color:#856404;border:1px solid #ffc107}
+.deadline-closed{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}
+
+/* === COHORT SELECT === */
+.cohort-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;background:#eef2ff;color:#3730a3;border:1px solid #c7d2fe}
+
+/* === RBAC ADMIN === */
+.attendance-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius);margin-bottom:8px}
+.attend-present{background:#e8f5e8;color:#006600;border-color:#99cc99}
+.attend-absent{background:#f8d7da;color:#721c24;border-color:#f5c6cb}
+.cert-card{border:2px solid var(--accent);border-radius:var(--radius-lg);padding:24px;text-align:center;background:linear-gradient(135deg,#fff 0%,#f8f8f8 100%);max-width:520px;margin:0 auto}
+.cert-card h2{font-size:13px;letter-spacing:2px;color:var(--text3);margin-bottom:16px;text-transform:uppercase}
+.cert-card .cert-name{font-size:26px;font-weight:800;margin:16px 0}
+.cert-card .cert-line{height:1px;background:var(--border);margin:16px 0;width:60%;margin-left:auto;margin-right:auto}
+
+/* === VIDEO BANK === */
+.video-card{border:1.5px solid var(--border2);border-radius:var(--radius-lg);overflow:hidden;background:var(--bg);cursor:pointer;transition:all .15s}
+.video-card:hover{border-color:var(--accent);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.video-thumb{width:100%;aspect-ratio:16/9;background:#000;display:flex;align-items:center;justify-content:center;color:#fff;font-size:32px;position:relative}
+.video-info{padding:12px}
+.video-info h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.video-info .meta{font-size:11px;color:var(--text3)}
+
+/* === QUIZ === */
+.quiz-q{border:1.5px solid var(--border2);border-radius:var(--radius-lg);padding:16px;margin-bottom:12px}
+.quiz-q-title{font-size:14px;font-weight:700;margin-bottom:10px}
+.quiz-opt{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid var(--border2);border-radius:var(--radius);margin-bottom:6px;cursor:pointer;font-size:13px;transition:all .15s}
+.quiz-opt:hover{background:var(--bg2)}
+.quiz-opt.selected{border-color:var(--accent);background:var(--bg3);font-weight:600}
+.quiz-opt.correct{border-color:#006600;background:#e8f5e8;color:#006600;font-weight:700}
+.quiz-opt.wrong{border-color:#c00;background:#f8d7da;color:#721c24;font-weight:700}
+.quiz-result-badge{font-size:32px;font-weight:800;text-align:center;padding:20px;border-radius:var(--radius-lg);margin-bottom:16px}
+
+/* === FORUM === */
+.forum-thread{border:1.5px solid var(--border2);border-radius:var(--radius-lg);padding:16px;margin-bottom:12px;cursor:pointer;transition:all .15s}
+.forum-thread:hover{border-color:var(--accent)}
+.forum-thread.pinned{border-color:#856404;background:#fffbf0}
+.forum-reply{background:var(--bg2);border-radius:var(--radius);padding:12px;margin-top:10px;border-right:3px solid var(--border)}
+.forum-reply.answer{border-right-color:#006600;background:#f0f8f0}
+
+/* === COLOR FOR TABS overflow === */
+.tabs{flex-wrap:wrap}
+.tab-btn{min-width:90px}
+
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="page-home" class="page active" style="min-height:100vh">
+  <nav>
+    <div class="nav-logo">المعهد المختص في التكوين المهني<small>الشهيد بن سعدة محمد - السوقر</small></div>
+    <button class="btn-outline btn-sm" onclick="goTo('section-login')">دخول</button>
+  </nav>
+  <div class="hero">
+    <h1>منصة تعليمية<br>متطورة</h1>
+    <p>منصة شاملة لنشر الدروس والتمارين، تسليم الواجبات، التصحيح، والتواصل بين الأساتذة والطلاب</p>
+    <div class="hero-badges">
+      <span class="hero-badge">📚 نشر الدروس</span>
+      <span class="hero-badge">📤 تسليم الواجبات</span>
+      <span class="hero-badge">🎯 تصحيح ونقاط</span>
+      <span class="hero-badge">🏫 إدارة المعهد</span>
+    </div>
+    <button class="btn btn-dark" style="font-size:15px;padding:12px 32px" onclick="goTo('section-login')">ابدأ الآن ←</button>
+  </div>
+  <div class="features">
+    <h2>الميزات الرئيسية</h2>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">📖</div><h3>نشر الدروس</h3><p>الأساتذة ينشرون الدروس حسب المادة والتخصص</p></div>
+      <div class="feature-card"><div class="feature-icon">📤</div><h3>تسليم الواجبات</h3><p>الطالب يحل الواجب ويرسله مباشرة للأستاذ</p></div>
+      <div class="feature-card"><div class="feature-icon">🎯</div><h3>نقاط وتقييم</h3><p>الأستاذ يصحح ويمنح النقطة مع تعليق للطالب</p></div>
+      <div class="feature-card"><div class="feature-icon">🔐</div><h3>إدارة المعهد</h3><p>الإدارة تتحكم في الموافقة على تسجيل الطلاب</p></div>
+    </div>
+  </div>
+  <div id="section-login" class="login-section">
+    <h2>تسجيل الدخول</h2>
+    <p class="subtitle">المعهد المختص في التكوين المهني - الشهيد بن سعدة محمد</p>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="swLoginTab('student')">طالب</button>
+      <button class="tab-btn" onclick="swLoginTab('teacher')">أستاذ</button>
+      <button class="tab-btn" onclick="swLoginTab('admin')">إدارة</button>
+    </div>
+    <div id="tab-student">
+      <div id="s-login-form">
+        <p style="font-size:13px;color:var(--text3);margin-bottom:16px;text-align:center">هل لديك حساب؟</p>
+        <div class="form-group"><label>اسم المستخدم</label><input id="sl-u" type="text" placeholder="اسم المستخدم"></div>
+        <div class="form-group"><label>كلمة المرور</label>
+          <div class="password-field"><input id="sl-p" type="password" placeholder="كلمة المرور"><button type="button" class="pw-toggle" onclick="togglePw('sl-p',this)">👁</button></div>
+        </div>
+        <button class="btn btn-dark btn-full" onclick="loginStudent()">دخول</button>
+        <hr class="divider">
+        <button class="btn btn-full" onclick="swSReg(true)">إنشاء حساب جديد</button>
+      </div>
+      <div id="s-reg-form" style="display:none">
+        <p style="font-size:13px;font-weight:600;margin-bottom:16px;text-align:center">إنشاء حساب طالب جديد</p>
+        <div class="form-row">
+          <div class="form-group"><label>الاسم</label><input id="sr-fn" type="text" placeholder="الاسم"></div>
+          <div class="form-group"><label>اللقب</label><input id="sr-ln" type="text" placeholder="اللقب"></div>
+        </div>
+        <div class="form-group"><label>التخصص</label>
+          <select id="sr-sp" onchange="populateCohortSelect('sr-cohort',this.value)"><option value="">اختر تخصصك</option><option value="informatique">إعلام آلي</option><option value="comptabilite">محاسبة</option><option value="electricite">كهرباء</option><option value="mecanique">ميكانيك</option><option value="couture">خياطة</option></select>
+        </div>
+        <div class="form-group"><label>الدفعة / السنة الدراسية</label>
+          <select id="sr-cohort"><option value="">اختر التخصص أولاً</option></select>
+        </div>
+        <div class="form-group"><label>المادة الرئيسية التي تدرسها</label><input id="sr-sb" type="text" placeholder="مثال: الشبكات، البرمجة..."></div>
+        <div class="form-group"><label>رمز التخصص (اختياري)</label><input id="sr-cd" type="text" placeholder="مثال: INF-2024-001"></div>
+        <div class="form-group"><label>اسم المستخدم</label><input id="sr-un" type="text" placeholder="اختر اسم مستخدم فريد"></div>
+        <div class="form-group"><label>كلمة المرور</label>
+          <div class="password-field"><input id="sr-pw" type="password" placeholder="اختر كلمة مرور"><button type="button" class="pw-toggle" onclick="togglePw('sr-pw',this)">👁</button></div>
+        </div>
+        <div class="form-group"><label>تأكيد كلمة المرور</label>
+          <div class="password-field"><input id="sr-pw2" type="password" placeholder="أعد كتابة كلمة المرور"><button type="button" class="pw-toggle" onclick="togglePw('sr-pw2',this)">👁</button></div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px;margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.6">⚠️ سيتم مراجعة طلب تسجيلك من قِبل إدارة المعهد قبل التمكن من الدخول.</div>
+        <button class="btn btn-dark btn-full" onclick="registerStudent()" style="margin-bottom:8px">إرسال طلب التسجيل</button>
+        <button class="btn btn-full" onclick="swSReg(false)">← رجوع</button>
+      </div>
+    </div>
+    <div id="tab-teacher" style="display:none">
+      <div id="t-login-form">
+        <div class="form-group"><label>اسم المستخدم</label><input id="tl-u" type="text" placeholder="اسم مستخدم الأستاذ"></div>
+        <div class="form-group"><label>كلمة المرور</label>
+          <div class="password-field"><input id="tl-p" type="password" placeholder="كلمة المرور"><button type="button" class="pw-toggle" onclick="togglePw('tl-p',this)">👁</button></div>
+        </div>
+        <button class="btn btn-dark btn-full" onclick="loginTeacher()">دخول</button>
+        <hr class="divider">
+        <button class="btn btn-full" onclick="swTReg(true)">إنشاء حساب أستاذ جديد</button>
+      </div>
+      <div id="t-reg-form" style="display:none">
+        <p style="font-size:13px;font-weight:600;margin-bottom:16px;text-align:center">إنشاء حساب أستاذ</p>
+        <div class="form-group"><label>الاسم الكامل</label><input id="tr-nm" type="text" placeholder="الاسم الكامل"></div>
+        <div class="form-group"><label>رقم البطاقة الوطنية</label><input id="tr-id" type="text" placeholder="رقم البطاقة الوطنية"></div>
+        <div class="form-group"><label>المادة التي تدرسها</label><input id="tr-sb" type="text" placeholder="مثال: الشبكات، برمجة الحاسوب..."></div>
+        <div class="form-group"><label>التخصصات التي تدرسها</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item"><input type="checkbox" class="tr-spec" value="informatique"> إعلام آلي</label>
+            <label class="checkbox-item"><input type="checkbox" class="tr-spec" value="comptabilite"> محاسبة</label>
+            <label class="checkbox-item"><input type="checkbox" class="tr-spec" value="electricite"> كهرباء</label>
+            <label class="checkbox-item"><input type="checkbox" class="tr-spec" value="mecanique"> ميكانيك</label>
+            <label class="checkbox-item"><input type="checkbox" class="tr-spec" value="couture"> خياطة</label>
+          </div>
+        </div>
+        <div class="form-group"><label>اسم المستخدم</label><input id="tr-un" type="text" placeholder="اختر اسم مستخدم"></div>
+        <div class="form-group"><label>كلمة المرور</label>
+          <div class="password-field"><input id="tr-pw" type="password" placeholder="اختر كلمة مرور"><button type="button" class="pw-toggle" onclick="togglePw('tr-pw',this)">👁</button></div>
+        </div>
+        <div class="form-group"><label>تأكيد كلمة المرور</label>
+          <div class="password-field"><input id="tr-pw2" type="password" placeholder="أعد كتابة كلمة المرور"><button type="button" class="pw-toggle" onclick="togglePw('tr-pw2',this)">👁</button></div>
+        </div>
+        <button class="btn btn-dark btn-full" onclick="registerTeacher()" style="margin-bottom:8px">إنشاء الحساب</button>
+        <button class="btn btn-full" onclick="swTReg(false)">← رجوع</button>
+      </div>
+    </div>
+    <div id="tab-admin" style="display:none">
+      <div class="form-group"><label>كلمة مرور الإدارة</label>
+        <div class="password-field"><input id="adm-p" type="password" placeholder="كلمة مرور الإدارة"><button type="button" class="pw-toggle" onclick="togglePw('adm-p',this)">👁</button></div>
+      </div>
+      <button class="btn btn-dark btn-full" onclick="loginAdmin()">دخول كإدارة</button>
+      <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px">كلمة المرور الافتراضية: admin2024</p>
+    </div>
+  </div>
+</div>
+
+<!-- STUDENT DASHBOARD -->
+<div id="page-student" class="page">
+  <div class="dash-header">
+    <div><h2 id="sd-title">مرحباً</h2><p id="sd-sub">لوحة تحكم الطالب</p></div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <div class="dash-nav">
+        <button class="dash-nav-btn active" onclick="swSTab('content',this)">المحتوى</button>
+        <button class="dash-nav-btn" onclick="swSTab('videos',this)">الفيديوهات</button>
+        <button class="dash-nav-btn" onclick="swSTab('quizzes',this)">الاختبارات</button>
+        <button class="dash-nav-btn" onclick="swSTab('forum',this)">المنتدى</button>
+        <button class="dash-nav-btn" onclick="swSTab('subs',this)">واجباتي <span class="notif-dot" id="sn-grades" style="display:none">0</span></button>
+        <button class="dash-nav-btn" onclick="swSTab('scores',this)">نقاطي <span class="notif-dot" id="sn-rewards" style="display:none">0</span></button>
+        <button class="dash-nav-btn" onclick="swSTab('msgs',this)">الرسائل <span class="notif-dot" id="sn-msgs" style="display:none">0</span></button>
+      </div>
+      <button class="btn-outline btn-sm" onclick="logout()">خروج</button>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div id="ss-content" class="dash-section active">
+      <div class="filter-bar">
+        <button class="filter-pill active" onclick="filterS('all',this)">الكل</button>
+        <button class="filter-pill" onclick="filterS('درس',this)">الدروس</button>
+        <button class="filter-pill" onclick="filterS('تمرين محلول',this)">تمارين محلولة</button>
+        <button class="filter-pill" onclick="filterS('تمرين للحل',this)">تمارين للحل</button>
+      </div>
+      <div id="s-grid" class="content-grid"></div>
+      <div id="s-empty" class="empty" style="display:none"><div class="empty-icon">📭</div><p>لا يوجد محتوى متاح في تخصصك حالياً</p></div>
+    </div>
+    <div id="ss-videos" class="dash-section">
+      <div class="section-title">بنك الفيديوهات التطبيقية</div>
+      <div id="s-videos-grid" class="content-grid"></div>
+      <div id="s-videos-empty" class="empty" style="display:none"><div class="empty-icon">🎬</div><p>لا توجد فيديوهات متاحة في تخصصك حالياً</p></div>
+    </div>
+    <div id="ss-quizzes" class="dash-section">
+      <div class="section-title">الاختبارات المتاحة</div>
+      <div id="s-quizzes-list"></div>
+      <div id="s-quizzes-empty" class="empty" style="display:none"><div class="empty-icon">📋</div><p>لا توجد اختبارات متاحة حالياً</p></div>
+    </div>
+    <div id="ss-forum" class="dash-section">
+      <div class="section-title">منتدى النقاش
+        <button class="btn btn-dark btn-sm" onclick="openNewThreadModal()">+ موضوع جديد</button>
+      </div>
+      <div id="s-forum-list"></div>
+      <div id="s-forum-empty" class="empty" style="display:none"><div class="empty-icon">💭</div><p>لا توجد مواضيع بعد. كن أول من يطرح سؤالاً!</p></div>
+    </div>
+    <div id="ss-subs" class="dash-section">
+      <div class="section-title">واجباتي المرسلة</div>
+      <div id="s-subs-list"></div>
+      <div id="s-subs-empty" class="empty" style="display:none"><div class="empty-icon">📝</div><p>لم ترسل أي واجب بعد. افتح تمريناً للحل وأرسل إجابتك.</p></div>
+    </div>
+    <div id="ss-scores" class="dash-section">
+      <div class="section-title">كشف نقاطي</div>
+      <div id="s-scores-list"></div>
+      <div id="s-scores-empty" class="empty" style="display:none"><div class="empty-icon">🎯</div><p>لا توجد نقاط بعد</p></div>
+      <div class="section-title" style="margin-top:28px">⭐ نقاط ومكافآت من الإدارة</div>
+      <div id="s-points-list"></div>
+      <div id="s-points-empty" class="empty" style="display:none"><div class="empty-icon">⭐</div><p>لم تحصل على نقاط تقدير بعد</p></div>
+      <div class="section-title" style="margin-top:28px">🎓 شهاداتي</div>
+      <div id="s-certs-list"></div>
+      <div id="s-certs-empty" class="empty" style="display:none"><div class="empty-icon">🎓</div><p>لم تصدر لك أي شهادة بعد</p></div>
+    </div>
+    <div id="ss-msgs" class="dash-section">
+      <div class="section-title">الرسائل مع الأساتذة</div>
+      <div id="s-convos-list"></div>
+      <div id="s-convos-empty" class="empty" style="display:none"><div class="empty-icon">💬</div><p>لا توجد محادثات بعد. يمكنك بدء محادثة من خلال إرسال واجب للأستاذ.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- TEACHER DASHBOARD -->
+<div id="page-teacher" class="page">
+  <div class="dash-header">
+    <div><h2 id="td-title">مرحباً أستاذ</h2><p id="td-sub">لوحة تحكم الأستاذ</p></div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <div class="dash-nav">
+        <button class="dash-nav-btn active" onclick="swTTab('publish',this)">نشر محتوى</button>
+        <button class="dash-nav-btn" onclick="swTTab('videos',this)">الفيديوهات</button>
+        <button class="dash-nav-btn" onclick="swTTab('quizzes',this)">الاختبارات</button>
+        <button class="dash-nav-btn" onclick="swTTab('forum',this)">المنتدى</button>
+        <button class="dash-nav-btn" onclick="swTTab('attendance',this)">غيابي</button>
+        <button class="dash-nav-btn" onclick="swTTab('subs',this)">واجبات الطلاب <span class="notif-dot" id="tn-new" style="display:none">0</span></button>
+        <button class="dash-nav-btn" onclick="swTTab('msgs',this)">الرسائل <span class="notif-dot" id="tn-msgs" style="display:none">0</span></button>
+        <button class="dash-nav-btn" onclick="swTTab('posts',this)">منشوراتي</button>
+      </div>
+      <button class="btn-outline btn-sm" onclick="logout()">خروج</button>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div id="ts-publish" class="dash-section active">
+      <div class="card">
+        <div class="section-title">نشر محتوى جديد</div>
+        <div class="form-group"><label>التخصص المستهدف</label>
+          <select id="u-spec" onchange="populateCohortSelect('u-cohort',this.value)"><option value="">اختر التخصص</option><option value="informatique">إعلام آلي</option><option value="comptabilite">محاسبة</option><option value="electricite">كهرباء</option><option value="mecanique">ميكانيك</option><option value="couture">خياطة</option></select>
+        </div>
+        <div class="form-group"><label>الدفعة / السنة الدراسية المستهدفة</label>
+          <select id="u-cohort"><option value="">جميع دفعات هذا التخصص</option></select>
+        </div>
+        <div class="form-group"><label>اسم المادة</label><input id="u-subj" type="text" placeholder="مثال: الشبكات، البرمجة..."></div>
+        <div class="form-group"><label>رمز المادة (اختياري)</label><input id="u-code" type="text" placeholder="مثال: NET-001"></div>
+        <div class="form-group"><label>عنوان المحتوى</label><input id="u-title" type="text" placeholder="عنوان الدرس أو التمرين"></div>
+        <div class="form-group"><label>النوع</label>
+          <select id="u-type" onchange="toggleDeadlineBox()"><option value="درس">درس</option><option value="تمرين محلول">تمرين محلول</option><option value="تمرين للحل">تمرين للحل</option></select>
+        </div>
+        <div class="form-group" id="u-deadline-box" style="display:none">
+          <label>الموعد النهائي للتسليم (اختياري)</label>
+          <div class="deadline-presets">
+            <button type="button" class="btn btn-sm" onclick="setDeadlinePreset(1)">+ يوم</button>
+            <button type="button" class="btn btn-sm" onclick="setDeadlinePreset(2)">+ يومان</button>
+            <button type="button" class="btn btn-sm" onclick="setDeadlinePreset(7)">+ أسبوع</button>
+            <button type="button" class="btn btn-sm btn-danger" onclick="document.getElementById('u-deadline').value=''">مسح</button>
+          </div>
+          <input type="datetime-local" id="u-deadline">
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">بعد انتهاء الموعد سيُغلق إرسال الحلول تلقائياً ولن يتمكن الطالب من التسليم.</div>
+        </div>
+        <div class="form-group">
+          <label>المحتوى</label>
+          <div style="border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+            <div style="display:flex;align-items:center;gap:0;border-bottom:1px solid var(--border2);background:var(--bg2)">
+              <span style="font-size:12px;color:var(--text3);padding:6px 12px;flex:1">اكتب يدوياً أو استورد من ملف</span>
+              <label style="display:flex;align-items:center;gap:6px;padding:6px 12px;cursor:pointer;border-right:1px solid var(--border2);color:var(--text2);font-size:12px;font-weight:600;margin:0;white-space:nowrap;background:var(--bg);transition:background .15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg)'">
+                📎 استيراد ملف
+                <input type="file" id="u-file" accept=".txt,.pdf,.doc,.docx,.odt,.rtf,.md,.png,.jpg,.jpeg,.gif,.bmp,.webp,.csv,.json,.html,.htm" style="display:none" onchange="importFileToContent(this,'u-body','u-file-info')">
+              </label>
+            </div>
+            <div id="u-file-info" style="display:none;padding:8px 12px;background:#f0f8f0;border-bottom:1px solid #c3e6cb;font-size:12px;color:#155724;gap:8px;align-items:center"></div>
+            <textarea id="u-body" rows="8" placeholder="اكتب محتوى الدرس أو التمرين هنا...&#10;&#10;أو اضغط 'استيراد ملف' لجلب المحتوى تلقائياً من:&#10;• ملف نصي (.txt, .md)&#10;• مستند Word (.doc, .docx)&#10;• ملف PDF (.pdf)&#10;• صورة (.png, .jpg, ...) ← يستخرج النص إذا وجد&#10;• جدول بيانات (.csv)" style="border:none;border-radius:0;resize:vertical"></textarea>
+          </div>
+        </div>
+        <div id="u-attachments-box" style="display:none;margin-bottom:16px">
+          <div style="font-size:12px;color:var(--text3);margin-bottom:6px">الملفات المرفقة:</div>
+          <div id="u-attachments-list" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-dark" style="flex:1" onclick="uploadContent()">نشر المحتوى</button>
+          <label class="btn" style="cursor:pointer;white-space:nowrap" title="إضافة ملف مرفق">
+            📎 إرفاق ملف
+            <input type="file" id="u-attach" multiple style="display:none" onchange="addAttachment(this)">
+          </label>
+        </div>
+      </div>
+    </div>
+    <div id="ts-videos" class="dash-section">
+      <div class="card" style="margin-bottom:24px">
+        <div class="section-title">رفع فيديو تطبيقي جديد</div>
+        <div class="form-group"><label>التخصص المستهدف</label>
+          <select id="v-spec"><option value="">اختر التخصص</option><option value="informatique">إعلام آلي</option><option value="comptabilite">محاسبة</option><option value="electricite">كهرباء</option><option value="mecanique">ميكانيك</option><option value="couture">خياطة</option></select>
+        </div>
+        <div class="form-group"><label>عنوان الفيديو</label><input id="v-title" type="text" placeholder="مثال: شرح ورشة اللحام الكهربائي"></div>
+        <div class="form-group"><label>وصف مختصر</label><textarea id="v-desc" rows="3" placeholder="وصف محتوى الفيديو..."></textarea></div>
+        <div class="form-group">
+          <label>ملف الفيديو (MP4 - حتى 200MB)</label>
+          <input type="file" id="v-file" accept="video/mp4,video/webm">
+          <div id="v-file-info" style="font-size:11px;color:var(--text3);margin-top:4px"></div>
+        </div>
+        <div id="v-progress-wrap" style="display:none;margin-bottom:14px">
+          <div style="height:10px;background:var(--bg3);border-radius:20px;overflow:hidden;border:1px solid var(--border2)">
+            <div id="v-progress-bar" style="height:100%;width:0%;background:#000;transition:width .15s"></div>
+          </div>
+          <div id="v-progress-txt" style="font-size:11px;color:var(--text3);margin-top:4px;text-align:center">0%</div>
+        </div>
+        <button id="v-upload-btn" class="btn btn-dark btn-full" onclick="uploadVideo()">رفع الفيديو</button>
+      </div>
+      <div class="section-title">فيديوهاتي</div>
+      <div id="t-videos-grid" class="content-grid"></div>
+      <div id="t-videos-empty" class="empty" style="display:none"><div class="empty-icon">🎬</div><p>لم ترفع أي فيديو بعد</p></div>
+    </div>
+    <div id="ts-quizzes" class="dash-section">
+      <div class="card" style="margin-bottom:24px">
+        <div class="section-title">إنشاء اختبار جديد</div>
+        <div class="form-group"><label>التخصص المستهدف</label>
+          <select id="q-spec"><option value="">اختر التخصص</option><option value="informatique">إعلام آلي</option><option value="comptabilite">محاسبة</option><option value="electricite">كهرباء</option><option value="mecanique">ميكانيك</option><option value="couture">خياطة</option></select>
+        </div>
+        <div class="form-group"><label>عنوان الاختبار</label><input id="q-title" type="text" placeholder="مثال: اختبار الفصل الأول - الشبكات"></div>
+        <div class="form-group"><label>مدة الاختبار بالدقائق (اختياري)</label><input id="q-time" type="number" placeholder="مثال: 20" min="1"></div>
+        <div id="q-questions-box"></div>
+        <button type="button" class="btn btn-full" onclick="addQuizQuestion()" style="margin-bottom:12px">+ إضافة سؤال</button>
+        <button class="btn btn-dark btn-full" onclick="publishQuiz()">نشر الاختبار</button>
+      </div>
+      <div class="section-title">اختباراتي</div>
+      <div id="t-quizzes-list"></div>
+      <div id="t-quizzes-empty" class="empty" style="display:none"><div class="empty-icon">📋</div><p>لم تنشئ أي اختبار بعد</p></div>
+    </div>
+    <div id="ts-forum" class="dash-section">
+      <div class="section-title">منتدى النقاش
+        <button class="btn btn-dark btn-sm" onclick="openNewThreadModal()">+ موضوع جديد</button>
+      </div>
+      <div id="t-forum-list"></div>
+      <div id="t-forum-empty" class="empty" style="display:none"><div class="empty-icon">💭</div><p>لا توجد مواضيع بعد</p></div>
+    </div>
+    <div id="ts-attendance" class="dash-section">
+      <div class="section-title">سجل حضوري وغيابي</div>
+      <div class="card">
+        <p style="font-size:13px;color:var(--text3);margin-bottom:12px">سجل اليوم — تُراجعه الإدارة من لوحتها</p>
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <button class="btn btn-green" style="flex:1" onclick="markAttendance('present')">✅ حاضر اليوم</button>
+          <button class="btn btn-danger" style="flex:1" onclick="markAttendance('absent')">❌ غائب اليوم</button>
+        </div>
+      </div>
+      <div class="section-title" style="margin-top:20px">سجلي السابق</div>
+      <div id="t-attendance-list"></div>
+      <div id="t-attendance-empty" class="empty" style="display:none"><div class="empty-icon">📅</div><p>لا يوجد سجل بعد</p></div>
+    </div>
+    <div id="ts-subs" class="dash-section">
+      <div class="section-title">واجبات الطلاب المرسلة</div>
+      <div id="t-subs-list"></div>
+      <div id="t-subs-empty" class="empty" style="display:none"><div class="empty-icon">📬</div><p>لا توجد واجبات مرسلة بعد</p></div>
+    </div>
+    <div id="ts-posts" class="dash-section">
+      <div class="section-title">منشوراتي</div>
+      <div id="t-posts-list"></div>
+      <div id="t-posts-empty" class="empty" style="display:none"><div class="empty-icon">📝</div><p>لم تنشر أي محتوى بعد</p></div>
+    </div>
+    <div id="ts-msgs" class="dash-section">
+      <div class="section-title">محادثات الطلاب</div>
+      <div id="t-convos-list"></div>
+      <div id="t-convos-empty" class="empty" style="display:none"><div class="empty-icon">💬</div><p>لا توجد محادثات بعد</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div id="page-admin" class="page">
+  <div class="dash-header">
+    <div><h2>لوحة تحكم الإدارة</h2><p>المعهد المختص في التكوين المهني</p></div>
+    <button class="btn-outline btn-sm" onclick="logout()">خروج</button>
+  </div>
+  <div class="dash-body">
+    <div class="stats-row" id="adm-stats"></div>
+    <div class="tabs" style="margin-bottom:20px">
+      <button class="tab-btn active" onclick="swAdmTab('pending')">طلبات التسجيل</button>
+      <button class="tab-btn" onclick="swAdmTab('students')">الطلاب</button>
+      <button class="tab-btn" onclick="swAdmTab('teachers')">الأساتذة</button>
+      <button class="tab-btn" onclick="swAdmTab('cohorts')">الدفعات</button>
+      <button class="tab-btn" onclick="swAdmTab('attendance')">غيابات الأساتذة</button>
+      <button class="tab-btn" onclick="swAdmTab('certificates')">الشهادات</button>
+      <button class="tab-btn" onclick="swAdmTab('points')">النقاط</button>
+      <button class="tab-btn" onclick="swAdmTab('content')">المحتوى</button>
+      <button class="tab-btn" onclick="swAdmTab('settings')">الإعدادات</button>
+    </div>
+    <div id="adm-tab-pending">
+      <div class="section-title">طلبات التسجيل المعلقة</div>
+      <div id="pend-list"></div>
+      <div id="pend-empty" class="empty" style="display:none"><div class="empty-icon">✅</div><p>لا توجد طلبات معلقة</p></div>
+    </div>
+    <div id="adm-tab-students" style="display:none">
+      <div class="section-title">قائمة الطلاب<button class="btn btn-sm" onclick="exportData('student')">تصدير</button></div>
+      <div style="overflow-x:auto"><table class="data-table"><thead><tr><th>الاسم</th><th>التخصص</th><th>الدفعة</th><th>المادة</th><th>المعدل</th><th>تاريخ التسجيل</th><th>إجراء</th></tr></thead><tbody id="stud-tbody"></tbody></table></div>
+    </div>
+    <div id="adm-tab-teachers" style="display:none">
+      <div class="section-title">قائمة الأساتذة<button class="btn btn-sm" onclick="exportData('teacher')">تصدير</button></div>
+      <div style="overflow-x:auto"><table class="data-table"><thead><tr><th>الاسم</th><th>المادة</th><th>التخصصات</th><th>رقم البطاقة</th><th>تاريخ التسجيل</th><th>إجراء</th></tr></thead><tbody id="teach-tbody"></tbody></table></div>
+    </div>
+    <div id="adm-tab-cohorts" style="display:none">
+      <div class="card" style="margin-bottom:20px">
+        <div class="section-title">إنشاء دفعة / فضاء دراسي جديد</div>
+        <div class="form-row">
+          <div class="form-group"><label>التخصص</label>
+            <select id="ch-spec"><option value="">اختر التخصص</option><option value="informatique">إعلام آلي</option><option value="comptabilite">محاسبة</option><option value="electricite">كهرباء</option><option value="mecanique">ميكانيك</option><option value="couture">خياطة</option></select>
+          </div>
+          <div class="form-group"><label>اسم الدفعة</label><input id="ch-name" type="text" placeholder="مثال: دفعة 2026 - السنة الأولى"></div>
+        </div>
+        <button class="btn btn-dark" onclick="createCohort()">إنشاء الدفعة</button>
+      </div>
+      <div class="section-title">الدفعات الحالية</div>
+      <div id="cohorts-list"></div>
+      <div id="cohorts-empty" class="empty" style="display:none"><div class="empty-icon">🏷️</div><p>لا توجد دفعات بعد</p></div>
+    </div>
+    <div id="adm-tab-attendance" style="display:none">
+      <div class="section-title">سجل غيابات وحضور الأساتذة</div>
+      <div id="adm-attendance-list"></div>
+      <div id="adm-attendance-empty" class="empty" style="display:none"><div class="empty-icon">📅</div><p>لا يوجد سجل حضور بعد</p></div>
+    </div>
+    <div id="adm-tab-certificates" style="display:none">
+      <div class="card" style="margin-bottom:20px">
+        <div class="section-title">إصدار شهادة نجاح رقمية</div>
+        <div class="form-group"><label>اختر الطالب</label>
+          <select id="cert-student"><option value="">اختر طالباً</option></select>
+        </div>
+        <button class="btn btn-dark" onclick="issueCertificate()">إصدار الشهادة</button>
+      </div>
+      <div class="section-title">الشهادات الصادرة</div>
+      <div id="certificates-list"></div>
+      <div id="certificates-empty" class="empty" style="display:none"><div class="empty-icon">🎓</div><p>لم تُصدر أي شهادة بعد</p></div>
+    </div>
+    <div id="adm-tab-points" style="display:none">
+      <div class="card" style="margin-bottom:20px">
+        <div class="section-title">إرسال نقاط تقدير لطالب</div>
+        <div class="form-row">
+          <div class="form-group"><label>اختر الطالب</label>
+            <select id="pts-student"><option value="">اختر طالباً</option></select>
+          </div>
+          <div class="form-group"><label>عدد النقاط</label><input id="pts-amount" type="number" placeholder="مثال: 5" step="0.5"></div>
+        </div>
+        <div class="form-group"><label>السبب / الملاحظة (اختياري)</label><input id="pts-reason" type="text" placeholder="مثال: مشاركة متميزة في المنتدى"></div>
+        <button class="btn btn-dark" onclick="sendPoints()">إرسال النقاط</button>
+      </div>
+      <div class="section-title">سجل النقاط الممنوحة</div>
+      <div id="points-list"></div>
+      <div id="points-empty" class="empty" style="display:none"><div class="empty-icon">⭐</div><p>لم يتم إرسال أي نقاط بعد</p></div>
+    </div>
+    <div id="adm-tab-content" style="display:none">
+      <div class="section-title">إدارة المحتوى</div>
+      <div id="adm-cont-list"></div>
+    </div>
+    <div id="adm-tab-settings" style="display:none">
+      <div class="card" style="margin-bottom:16px">
+        <div class="section-title">إعدادات المعهد</div>
+        <div class="form-group"><label>اسم المعهد</label><input id="set-nm" type="text"></div>
+        <div class="form-group"><label>رسالة الترحيب</label><input id="set-wl" type="text"></div>
+        <button class="btn btn-dark" onclick="saveSettings()">حفظ الإعدادات</button>
+      </div>
+      <div class="card">
+        <div class="section-title">تغيير كلمة مرور الإدارة</div>
+        <div class="form-group"><label>كلمة المرور الحالية</label><div class="password-field"><input id="set-op" type="password"><button type="button" class="pw-toggle" onclick="togglePw('set-op',this)">👁</button></div></div>
+        <div class="form-group"><label>كلمة المرور الجديدة</label><div class="password-field"><input id="set-np" type="password"><button type="button" class="pw-toggle" onclick="togglePw('set-np',this)">👁</button></div></div>
+        <button class="btn btn-dark" onclick="changeAdminPass()">تغيير كلمة المرور</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CERTIFICATE VIEW MODAL -->
+<div class="modal-overlay" id="modal-cert">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header"><h3>شهادة النجاح الرقمية</h3><button class="modal-close" onclick="closeModal('modal-cert')">×</button></div>
+    <div id="cert-render"></div>
+    <button class="btn btn-dark btn-full" style="margin-top:16px" onclick="window.print()">🖨️ طباعة الشهادة</button>
+  </div>
+</div>
+
+<!-- VIDEO PLAYER MODAL -->
+<div class="modal-overlay" id="modal-video">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header"><h3 id="vm-title"></h3><button class="modal-close" onclick="closeModal('modal-video')">×</button></div>
+    <video id="vm-player" controls style="width:100%;border-radius:var(--radius);background:#000;max-height:60vh"></video>
+    <p id="vm-desc" style="font-size:13px;color:var(--text2);margin-top:12px;line-height:1.7"></p>
+    <div id="vm-meta" style="font-size:11px;color:var(--text3);margin-top:8px"></div>
+  </div>
+</div>
+
+<!-- QUIZ TAKING MODAL -->
+<div class="modal-overlay" id="modal-quiz">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header"><h3 id="qz-title"></h3><button class="modal-close" onclick="closeModal('modal-quiz')">×</button></div>
+    <div id="qz-timer" style="display:none;font-size:13px;font-weight:700;color:#c00;margin-bottom:12px;text-align:center"></div>
+    <div id="qz-body"></div>
+    <button class="btn btn-dark btn-full" id="qz-submit-btn" onclick="submitQuiz()" style="margin-top:12px">إرسال الإجابات</button>
+  </div>
+</div>
+
+<!-- FORUM THREAD MODAL -->
+<div class="modal-overlay" id="modal-thread">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header"><h3 id="th-title"></h3><button class="modal-close" onclick="closeModal('modal-thread')">×</button></div>
+    <div id="th-meta" style="font-size:12px;color:var(--text3);margin-bottom:10px"></div>
+    <div id="th-body" style="font-size:14px;line-height:1.8;color:var(--text2);margin-bottom:16px;white-space:pre-wrap"></div>
+    <hr class="divider">
+    <div class="section-title" style="margin-bottom:10px">الردود</div>
+    <div id="th-replies"></div>
+    <div class="form-group" style="margin-top:12px">
+      <textarea id="th-reply-input" rows="3" placeholder="اكتب ردك هنا..."></textarea>
+    </div>
+    <button class="btn btn-dark btn-full" onclick="postReply()">إرسال الرد</button>
+  </div>
+</div>
+
+<!-- NEW THREAD MODAL -->
+<div class="modal-overlay" id="modal-new-thread">
+  <div class="modal">
+    <div class="modal-header"><h3>طرح موضوع جديد</h3><button class="modal-close" onclick="closeModal('modal-new-thread')">×</button></div>
+    <div class="form-group"><label>عنوان الموضوع</label><input id="nt-title" type="text" placeholder="اكتب عنوان سؤالك أو موضوعك"></div>
+    <div class="form-group"><label>التفاصيل</label><textarea id="nt-body" rows="5" placeholder="اشرح سؤالك بالتفصيل..."></textarea></div>
+    <button class="btn btn-dark btn-full" onclick="createThread()">نشر الموضوع</button>
+  </div>
+</div>
+
+<!-- CONTENT VIEW MODAL -->
+<div class="modal-overlay" id="modal-content">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="mc-title"></h3>
+      <button class="modal-close" onclick="closeModal('modal-content')">×</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <span id="mc-type" class="tag"></span>
+      <span id="mc-teacher" class="badge"></span>
+      <span id="mc-subj" class="badge"></span>
+    </div>
+    <div id="mc-body" style="font-size:14px;line-height:1.8;white-space:pre-wrap;color:var(--text2);margin-bottom:20px"></div>
+    <div id="mc-deadline-area" style="display:none;margin-bottom:16px"></div>
+      <div id="mc-submit-area" style="display:none;border-top:1px solid var(--border2);padding-top:16px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px">📤 إرسال حلك للأستاذ</div>
+      <div id="mc-already" style="display:none;background:var(--bg2);border-right:3px solid #006600;border-radius:var(--radius);padding:10px;margin-bottom:12px;font-size:13px;color:#006600">✅ أرسلت حلاً من قبل. يمكنك إرسال حل جديد ليحل محله.</div>
+      <div id="mc-closed-msg" style="display:none;background:#f8d7da;border-right:3px solid #c00;border-radius:var(--radius);padding:10px;margin-bottom:12px;font-size:13px;color:#721c24">⛔ انتهت مدة تسليم هذا الواجب. لم يعد بإمكانك إرسال حل.</div>
+      <div id="mc-submit-form">
+      <div class="form-group">
+        <label>اكتب حلك هنا</label>
+        <div style="border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+          <div style="display:flex;align-items:center;border-bottom:1px solid var(--border2);background:var(--bg2)">
+            <span style="font-size:12px;color:var(--text3);padding:6px 12px;flex:1">اكتب حلك أو استورد من ملف</span>
+            <label style="display:flex;align-items:center;gap:6px;padding:6px 12px;cursor:pointer;border-right:1px solid var(--border2);color:var(--text2);font-size:12px;font-weight:600;margin:0;white-space:nowrap;background:var(--bg);transition:background .15s" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg)'">
+              📎 استيراد ملف
+              <input type="file" id="mc-file" accept=".txt,.pdf,.doc,.docx,.odt,.rtf,.md,.png,.jpg,.jpeg,.gif,.bmp,.webp,.csv,.json" style="display:none" onchange="importFileToContent(this,'mc-ans','mc-file-info')">
+            </label>
+          </div>
+          <div id="mc-file-info" style="display:none;padding:8px 12px;background:#f0f8f0;border-bottom:1px solid #c3e6cb;font-size:12px;color:#155724"></div>
+          <textarea id="mc-ans" rows="5" placeholder="اكتب إجابتك وحلك للتمرين بالتفصيل...&#10;&#10;أو اضغط 'استيراد ملف' لجلب الحل من ملف خارجي" style="border:none;border-radius:0;resize:vertical"></textarea>
+        </div>
+      </div>
+      <button class="btn btn-dark btn-full" onclick="submitAnswer()">إرسال الحل للأستاذ 📤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GRADE MODAL -->
+<div class="modal-overlay" id="modal-grade">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>تصحيح الواجب ومنح النقطة</h3>
+      <button class="modal-close" onclick="closeModal('modal-grade')">×</button>
+    </div>
+    <div id="gm-info" style="margin-bottom:12px"></div>
+    <div class="sub-answer" id="gm-ans"></div>
+    <hr class="divider">
+    <div style="font-size:15px;font-weight:700;margin-bottom:14px">🎯 منح النقطة</div>
+    <div style="display:flex;gap:12px;align-items:flex-end">
+      <div class="form-group" style="flex:0 0 140px">
+        <label>النقطة (من 20)</label>
+        <input type="number" id="gm-score" min="0" max="20" step="0.5" placeholder="مثال: 15.5">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>تعليق الأستاذ للطالب (اختياري)</label>
+      <textarea id="gm-cmt" rows="3" placeholder="أضف ملاحظة أو توجيهاً للطالب..."></textarea>
+    </div>
+    <button class="btn btn-dark btn-full" onclick="saveGrade()">حفظ النقطة وإرسالها للطالب ✓</button>
+  </div>
+</div>
+
+<!-- CHAT MODAL -->
+<div class="modal-overlay" id="modal-chat">
+  <div class="modal" style="display:flex;flex-direction:column;height:85vh;max-height:600px;padding:0;overflow:hidden">
+    <div class="modal-header" style="padding:16px 20px;margin:0;border-radius:var(--radius-lg) var(--radius-lg) 0 0;flex-shrink:0">
+      <div>
+        <h3 id="chat-title" style="font-size:15px"></h3>
+        <p id="chat-sub" style="font-size:11px;color:var(--text3);margin-top:2px"></p>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-chat')">×</button>
+    </div>
+    <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--bg2)"></div>
+    <div style="padding:12px 16px;border-top:1px solid var(--border2);display:flex;gap:8px;flex-shrink:0;background:var(--bg)">
+      <textarea id="chat-input" rows="2" placeholder="اكتب رسالتك هنا..." style="flex:1;resize:none;min-height:auto;padding:8px 12px;font-size:13px" onkeydown="chatKeyDown(event)"></textarea>
+      <button class="btn btn-dark" onclick="sendChatMsg()" style="align-self:flex-end;padding:9px 16px">إرسال</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.chat-bubble{max-width:75%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.6;word-break:break-word}
+.chat-bubble.mine{background:var(--accent);color:var(--accent-text);align-self:flex-start;border-bottom-right-radius:4px}
+.chat-bubble.theirs{background:var(--bg);border:1px solid var(--border2);color:var(--text);align-self:flex-end;border-bottom-left-radius:4px}
+.chat-bubble .chat-meta{font-size:10px;opacity:0.6;margin-top:4px}
+.chat-bubble.mine .chat-meta{color:rgba(255,255,255,0.7)}
+.convo-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:1.5px solid var(--border2);border-radius:var(--radius-lg);margin-bottom:10px;cursor:pointer;background:var(--bg);transition:all .15s}
+.convo-item:hover{border-color:var(--accent)}
+.convo-item.unread{border-color:#000;border-width:2px}
+.convo-avatar{width:40px;height:40px;border-radius:50%;background:var(--bg3);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.score-input-inline{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;margin-top:8px}
+</style>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// =====================================================================
+// ==================== SUPABASE CONFIGURATION ========================
+// =====================================================================
+// عدّل هذين السطرين وضع رابط ومفتاح مشروعك في Supabase
+const SUPABASE_URL = 'https://mxugcwtxkguvsjtkijgr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5dXd3enFrYnRybXZvbndzb3NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMzgzMjksImV4cCI6MjA5ODcxNDMyOX0.kYfJlYjfUG2h7NjatbWEtczmgt1fagu18yZghqoiGBA';
+const VIDEO_BUCKET = 'course-videos'; // اسم الـ Bucket في Storage
+
+const supabaseClient = (window.supabase && SUPABASE_URL.startsWith('http'))
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+if(!supabaseClient){
+  console.warn('⚠️ لم يتم ضبط بيانات اتصال Supabase بعد. عدّل SUPABASE_URL و SUPABASE_ANON_KEY في أعلى الكود.');
+}
+
+// ---- رفع ملف كبير إلى Storage مع شريط تقدم حقيقي (باستخدام XHR) ----
+function uploadFileWithProgress(bucket, path, file, onProgress){
+  return new Promise((resolve, reject)=>{
+    if(!SUPABASE_URL.startsWith('http')) return reject(new Error('لم يتم ضبط رابط Supabase'));
+    const url = `${SUPABASE_URL}/storage/v1/object/${bucket}/${encodeURIComponent(path).replace(/%2F/g,'/')}`;
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + SUPABASE_ANON_KEY);
+    xhr.setRequestHeader('apikey', SUPABASE_ANON_KEY);
+    xhr.setRequestHeader('x-upsert', 'true');
+    xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+    xhr.upload.onprogress = function(e){
+      if(e.lengthComputable && onProgress) onProgress(Math.round((e.loaded/e.total)*100));
+    };
+    xhr.onload = function(){
+      if(xhr.status>=200 && xhr.status<300) resolve();
+      else reject(new Error('فشل رفع الملف: '+xhr.status));
+    };
+    xhr.onerror = ()=>reject(new Error('خطأ في الشبكة أثناء رفع الملف'));
+    xhr.send(file);
+  });
+}
+function getPublicVideoUrl(path){
+  return `${SUPABASE_URL}/storage/v1/object/public/${VIDEO_BUCKET}/${path}`;
+}
+
+// =====================================================================
+// ==================== DB (كاش محلي + مزامنة سحابية) =================
+// =====================================================================
+const DB={
+  get(k){try{return JSON.parse(localStorage.getItem('ifp_'+k))||null}catch{return null}},
+  set(k,v){localStorage.setItem('ifp_'+k,JSON.stringify(v))},
+  gd(k,d){return this.get(k)||d}
+};
+function initDB(){
+  if(!DB.get('init')){
+    DB.set('users',{});DB.set('pending',[]);DB.set('content',[]);DB.set('submissions',[]);DB.set('messages',[]);
+    DB.set('cohorts',[]);DB.set('videos',[]);DB.set('quizzes',[]);DB.set('quizAttempts',[]);
+    DB.set('threads',[]);DB.set('replies',[]);DB.set('attendance',[]);DB.set('certificates',[]);
+    DB.set('settings',{name:'المعهد المختص في التكوين المهني',welcome:'مرحباً بكم في منصتنا التعليمية',adminPass:'admin2024'});
+    DB.set('init',true);
+  }
+  // migrate: add new stores if missing (for upgrades from older versions)
+  ['messages','cohorts','videos','quizzes','quizAttempts','threads','replies','attendance','certificates'].forEach(k=>{
+    if(!DB.get(k))DB.set(k,[]);
+  });
+  bootstrapCloudData(); // سحب أحدث البيانات من Supabase عند فتح الصفحة
+}
+
+// ---- تحميل الدروس/الفيديوهات من جدول 'lessons' في Supabase ----
+// يعيد true عند النجاح و false عند الفشل (حتى تستطيع الدوال المستدعية تمييز
+// "لا توجد دروس فعلاً" عن "تعذر الاتصال بالسيرفر")
+async function loadLessonsFromCloud(specialty){
+  if(!supabaseClient){ console.warn('لا يوجد اتصال Supabase مهيّأ.'); return false; }
+  try{
+    let q = supabaseClient.from('lessons').select('*').order('created_at',{ascending:false});
+    if(specialty) q = q.eq('specialty', specialty);
+    const {data, error} = await q;
+    if(error) throw error;
+    const mapped = (data||[]).map(r=>({
+      id:r.id, specialty:r.specialty, title:r.title, description:r.description,
+      teacherName:r.teacher_name, teacherUsername:r.teacher_username,
+      data:r.video_url, storagePath:r.storage_path, fileName:r.file_name,
+      size:r.size, createdAt: r.created_at ? new Date(r.created_at).getTime() : Date.now(),
+      views:r.views||0
+    }));
+    DB.set('videos', mapped);
+    return true;
+  }catch(err){
+    console.error('تعذر تحميل الدروس من السيرفر:', err.message||err, err.details||'', err.hint||'');
+    return false;
+  }
+}
+
+// ---- تحميل المحتوى النصي (الدروس والتمارين) من جدول 'content' في Supabase ----
+// يعيد true عند النجاح و false عند الفشل، ويمكن تمرير specialty لفلترة من طرف السيرفر
+async function loadContentFromCloud(specialty){
+  if(!supabaseClient){ console.warn('لا يوجد اتصال Supabase مهيّأ.'); return false; }
+  try{
+    let q = supabaseClient.from('content').select('*').order('created_at',{ascending:false});
+    if(specialty) q = q.eq('specialty', specialty);
+    const {data, error} = await q;
+    if(error) throw error;
+    const mapped = (data||[]).map(r=>({
+      id:r.id, specialty:r.specialty, cohortId:r.cohort_id, subject:r.subject, subjectCode:r.subject_code,
+      title:r.title, category:r.category, body:r.body, deadline:r.deadline,
+      attachments:r.attachments||[], teacherName:r.teacher_name, teacherUsername:r.teacher_username,
+      createdAt: r.created_at ? new Date(r.created_at).getTime() : Date.now()
+    }));
+    DB.set('content', mapped);
+    return true;
+  }catch(err){
+    console.error('تعذر تحميل المحتوى من السيرفر:', err.message||err, err.details||'', err.hint||'');
+    return false;
+  }
+}
+
+// ---- سحب المستخدمين المعتمدين، الطلبات المعلقة، والشهادات من السحابة ----
+// كل جلب معزول في try/catch خاص به حتى لا يمنع فشل جدول واحد بقية المزامنة
+// (وعلى رأسها تحميل الدروس، وهو الأهم لصفحة الطالب)
+async function bootstrapCloudData(){
+  if(!supabaseClient) return;
+
+  try{
+    const {data:cloudUsers, error} = await supabaseClient.from('app_users').select('*');
+    if(error) throw error;
+    if(cloudUsers){
+      const localUsers = DB.gd('users',{});
+      cloudUsers.forEach(u=>{
+        localUsers[u.username] = {
+          id:u.id, type:u.type, fullName:u.full_name, specialty:u.specialty,
+          specialties:u.specialties||undefined, cohortId:u.cohort_id, subject:u.subject,
+          code:u.code, nationalId:u.national_id, username:u.username, password:u.password,
+          status:u.status, createdAt:u.created_at?new Date(u.created_at).getTime():Date.now(),
+          approvedAt:u.approved_at?new Date(u.approved_at).getTime():undefined
+        };
+      });
+      DB.set('users', localUsers);
+    }
+  }catch(err){ console.error('تعذرت مزامنة المستخدمين (app_users):', err.message||err); }
+
+  try{
+    const {data:cloudPending, error} = await supabaseClient.from('pending_requests').select('*');
+    if(error) throw error;
+    if(cloudPending){
+      const mapped = cloudPending.map(p=>({
+        id:p.id, type:p.type||'student', fullName:p.full_name, specialty:p.specialty,
+        cohortId:p.cohort_id, subject:p.subject, code:p.code, username:p.username,
+        password:p.password, status:'pending', createdAt:p.created_at?new Date(p.created_at).getTime():Date.now()
+      }));
+      DB.set('pending', mapped);
+    }
+  }catch(err){ console.error('تعذرت مزامنة الطلبات المعلقة (pending_requests):', err.message||err); }
+
+  try{
+    const {data:cloudCerts, error} = await supabaseClient.from('certificates').select('*');
+    if(error) throw error;
+    if(cloudCerts){
+      const mapped = cloudCerts.map(c=>({
+        id:c.id, studentUsername:c.student_username, studentName:c.student_name,
+        specialty:c.specialty, cohortName:c.cohort_name, average:c.average,
+        issuedAt:c.issued_at?new Date(c.issued_at).getTime():Date.now(), verifyCode:c.verify_code
+      }));
+      DB.set('certificates', mapped);
+    }
+  }catch(err){ console.error('تعذرت مزامنة الشهادات (certificates):', err.message||err); }
+
+  try{
+    const {data:cloudPoints, error} = await supabaseClient.from('points').select('*').order('created_at',{ascending:false});
+    if(error) throw error;
+    if(cloudPoints){
+      const mapped = cloudPoints.map(p=>({
+        id:p.id, studentUsername:p.student_username, studentName:p.student_name,
+        amount:p.amount, reason:p.reason, sentAt:p.created_at?new Date(p.created_at).getTime():Date.now()
+      }));
+      DB.set('points', mapped);
+    }
+  }catch(err){ console.error('تعذرت مزامنة النقاط (points):', err.message||err); }
+
+  await loadContentFromCloud();
+  // مهم: هذا الآن مستقل تماماً عن نجاح/فشل الطلبات أعلاه
+  await loadLessonsFromCloud();
+}
+let CU=null,gradeTarget=null,viewTarget=null,chatConvoKey=null,chatPartner=null;
+let quizQuestionDraft=[],activeQuizTarget=null,activeThreadId=null,quizTimerInterval=null;
+const SN={informatique:'إعلام آلي',comptabilite:'محاسبة',electricite:'كهرباء',mecanique:'ميكانيك',couture:'خياطة'};
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function fd(ts){return new Date(ts).toLocaleDateString('ar-DZ')}
+function fdt(ts){return new Date(ts).toLocaleString('ar-DZ',{dateStyle:'short',timeStyle:'short'})}
+function toast(msg,t=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast show'+(t==='error'?' error':t==='ok'?' ok':'');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3200);
+}
+function showPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+n).classList.add('active');}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function goTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'})}
+function scC(sc){const n=parseFloat(sc);return n>=14?'score-high':n>=10?'score-mid':'score-low'}
+
+// ===== PASSWORD SHOW/HIDE TOGGLE =====
+function togglePw(inputId,btn){
+  const input=document.getElementById(inputId);
+  const isHidden=input.type==='password';
+  input.type=isHidden?'text':'password';
+  btn.textContent=isHidden?'🙈':'👁';
+  btn.title=isHidden?'إخفاء كلمة المرور':'إظهار كلمة المرور';
+}
+
+// ===== COHORTS (ACADEMIC SPACES) =====
+function populateCohortSelect(selectId,specialty){
+  const sel=document.getElementById(selectId);
+  if(!sel)return;
+  const cohorts=DB.gd('cohorts',[]).filter(c=>c.specialty===specialty);
+  if(!specialty){sel.innerHTML='<option value="">اختر التخصص أولاً</option>';return;}
+  if(!cohorts.length){sel.innerHTML='<option value="">لا توجد دفعات بعد لهذا التخصص</option>';return;}
+  sel.innerHTML='<option value="">بدون دفعة محددة</option>'+cohorts.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+}
+function createCohort(){
+  const sp=document.getElementById('ch-spec').value,nm=document.getElementById('ch-name').value.trim();
+  if(!sp||!nm)return toast('يرجى اختيار التخصص وكتابة اسم الدفعة','error');
+  const cohorts=DB.gd('cohorts',[]);
+  cohorts.push({id:uid(),specialty:sp,name:nm,createdAt:Date.now()});
+  DB.set('cohorts',cohorts);toast('تم إنشاء الدفعة بنجاح','ok');
+  document.getElementById('ch-name').value='';document.getElementById('ch-spec').value='';
+  renderCohortsList();
+}
+function deleteCohort(cid){
+  if(!confirm('حذف هذه الدفعة؟ (لن يتأثر الطلاب المسجلين بها بأثر رجعي)'))return;
+  let cohorts=DB.gd('cohorts',[]);cohorts=cohorts.filter(c=>c.id!==cid);DB.set('cohorts',cohorts);
+  toast('تم حذف الدفعة');renderCohortsList();
+}
+function renderCohortsList(){
+  const cohorts=DB.gd('cohorts',[]).sort((a,b)=>b.createdAt-a.createdAt);
+  const list=document.getElementById('cohorts-list'),empty=document.getElementById('cohorts-empty');
+  if(!list)return;
+  if(!cohorts.length){list.innerHTML='';if(empty)empty.style.display='block';return}
+  if(empty)empty.style.display='none';
+  const users=DB.gd('users',{});
+  list.innerHTML=cohorts.map(c=>{
+    const studentCount=Object.values(users).filter(u=>u.type==='student'&&u.cohortId===c.id).length;
+    return`<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1.5px solid var(--border2);border-radius:var(--radius-lg);margin-bottom:8px;background:var(--bg)">
+      <div>
+        <div style="font-size:14px;font-weight:700">${c.name}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:3px">${SN[c.specialty]||c.specialty} • ${studentCount} طالب مسجل • ${fd(c.createdAt)}</div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="deleteCohort('${c.id}')">حذف</button>
+    </div>`;
+  }).join('');
+}
+
+// LOGIN TABS
+function swLoginTab(tab){
+  ['student','teacher','admin'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
+  document.querySelectorAll('#page-home .tabs .tab-btn').forEach((b,i)=>b.classList.toggle('active',['student','teacher','admin'][i]===tab));
+}
+
+// STUDENT REG
+function swSReg(show){document.getElementById('s-login-form').style.display=show?'none':'block';document.getElementById('s-reg-form').style.display=show?'block':'none';}
+async function registerStudent(){
+  const fn=document.getElementById('sr-fn').value.trim(),ln=document.getElementById('sr-ln').value.trim(),sp=document.getElementById('sr-sp').value,cohortId=document.getElementById('sr-cohort').value,sb=document.getElementById('sr-sb').value.trim(),cd=document.getElementById('sr-cd').value.trim(),un=document.getElementById('sr-un').value.trim(),pw=document.getElementById('sr-pw').value,pw2=document.getElementById('sr-pw2').value;
+  if(!fn||!ln||!sp||!sb||!un||!pw)return toast('يرجى ملء جميع الحقول المطلوبة','error');
+  if(pw.length<4)return toast('كلمة المرور يجب أن تكون 4 أحرف على الأقل','error');
+  if(pw!==pw2)return toast('كلمتا المرور غير متطابقتين','error');
+  const users=DB.gd('users',{});if(users[un])return toast('اسم المستخدم مستخدم مسبقاً','error');
+  const pending=DB.gd('pending',[]);if(pending.find(p=>p.username===un))return toast('هذا الاسم في انتظار المراجعة','error');
+  const newReq={id:uid(),type:'student',fullName:fn+' '+ln,specialty:sp,cohortId:cohortId||null,subject:sb,code:cd,username:un,password:pw,status:'pending',createdAt:Date.now()};
+  pending.push(newReq);
+  DB.set('pending',pending);toast('تم إرسال طلب تسجيلك. يرجى انتظار موافقة الإدارة','ok');swSReg(false);
+  ['sr-fn','sr-ln','sr-sb','sr-cd','sr-un','sr-pw','sr-pw2'].forEach(i=>document.getElementById(i).value='');document.getElementById('sr-sp').value='';document.getElementById('sr-cohort').innerHTML='<option value="">اختر التخصص أولاً</option>';
+  if(supabaseClient){
+    try{
+      await supabaseClient.from('pending_requests').insert({
+        username:newReq.username, full_name:newReq.fullName, type:'student', specialty:newReq.specialty,
+        cohort_id:newReq.cohortId, subject:newReq.subject, code:newReq.code, password:newReq.password
+      });
+    }catch(err){ console.error('تعذرت مزامنة طلب التسجيل مع السيرفر:', err); }
+  }
+}
+async function loginStudent(){
+  const un=document.getElementById('sl-u').value.trim(),pw=document.getElementById('sl-p').value;
+  if(!un||!pw)return toast('أدخل اسم المستخدم وكلمة المرور','error');
+  let users=DB.gd('users',{});let u=users[un];
+  if(!u && supabaseClient){
+    try{
+      const {data} = await supabaseClient.from('app_users').select('*').eq('username',un).eq('type','student').maybeSingle();
+      if(data){
+        u={id:data.id,type:'student',fullName:data.full_name,specialty:data.specialty,cohortId:data.cohort_id,subject:data.subject,code:data.code,username:data.username,password:data.password,status:data.status,createdAt:data.created_at?new Date(data.created_at).getTime():Date.now()};
+        users[un]=u;DB.set('users',users);
+      }
+    }catch(err){ console.error('تعذر البحث عن المستخدم في السيرفر:', err); }
+  }
+  if(!u||u.type!=='student'||u.password!==pw)return toast('اسم المستخدم أو كلمة المرور غير صحيحة','error');
+  if(u.status!=='approved')return toast('حسابك لم تتم الموافقة عليه بعد من الإدارة','error');
+  CU={...u};
+  document.getElementById('sd-title').textContent='مرحباً '+u.fullName;
+  const cohorts=DB.gd('cohorts',[]);const myCohort=cohorts.find(c=>c.id===u.cohortId);
+  document.getElementById('sd-sub').textContent=SN[u.specialty]+(u.subject?' - '+u.subject:'')+(myCohort?' • '+myCohort.name:'');
+  showPage('student');renderSContent();updSNotif();
+}
+
+// TEACHER REG
+function swTReg(show){document.getElementById('t-login-form').style.display=show?'none':'block';document.getElementById('t-reg-form').style.display=show?'block':'none';}
+async function registerTeacher(){
+  const nm=document.getElementById('tr-nm').value.trim(),nid=document.getElementById('tr-id').value.trim(),sb=document.getElementById('tr-sb').value.trim();
+  const specs=Array.from(document.querySelectorAll('.tr-spec:checked')).map(e=>e.value);
+  const un=document.getElementById('tr-un').value.trim(),pw=document.getElementById('tr-pw').value,pw2=document.getElementById('tr-pw2').value;
+  if(!nm||!sb||specs.length===0||!un||!pw)return toast('يرجى ملء جميع الحقول','error');
+  if(pw!==pw2)return toast('كلمتا المرور غير متطابقتين','error');
+  if(pw.length<4)return toast('كلمة المرور قصيرة جداً','error');
+  const users=DB.gd('users',{});if(users[un])return toast('اسم المستخدم مستخدم مسبقاً','error');
+  const newTeacher={id:uid(),type:'teacher',fullName:nm,subject:sb,specialties:specs,nationalId:nid,username:un,password:pw,status:'approved',createdAt:Date.now()};
+  users[un]=newTeacher;
+  DB.set('users',users);toast('تم إنشاء حساب الأستاذ! يمكنك الدخول الآن','ok');swTReg(false);
+  if(supabaseClient){
+    try{
+      await supabaseClient.from('app_users').upsert({
+        username:newTeacher.username, full_name:newTeacher.fullName, type:'teacher', subject:newTeacher.subject,
+        specialties:newTeacher.specialties, national_id:newTeacher.nationalId, password:newTeacher.password, status:'approved'
+      });
+    }catch(err){ console.error('تعذرت مزامنة حساب الأستاذ مع السيرفر:', err); }
+  }
+}
+async function loginTeacher(){
+  const un=document.getElementById('tl-u').value.trim(),pw=document.getElementById('tl-p').value;
+  if(!un||!pw)return toast('أدخل اسم المستخدم وكلمة المرور','error');
+  let users=DB.gd('users',{});let u=users[un];
+  if(!u && supabaseClient){
+    try{
+      const {data} = await supabaseClient.from('app_users').select('*').eq('username',un).eq('type','teacher').maybeSingle();
+      if(data){
+        u={id:data.id,type:'teacher',fullName:data.full_name,subject:data.subject,specialties:data.specialties||[],nationalId:data.national_id,username:data.username,password:data.password,status:data.status,createdAt:data.created_at?new Date(data.created_at).getTime():Date.now()};
+        users[un]=u;DB.set('users',users);
+      }
+    }catch(err){ console.error('تعذر البحث عن الأستاذ في السيرفر:', err); }
+  }
+  if(!u||u.type!=='teacher'||u.password!==pw)return toast('اسم المستخدم أو كلمة المرور غير صحيحة','error');
+  CU={...u};
+  document.getElementById('td-title').textContent='مرحباً أستاذ '+u.fullName;
+  document.getElementById('td-sub').textContent=u.subject+' | '+(u.specialties||[]).map(s=>SN[s]).join('، ');
+  showPage('teacher');updTNotif();
+}
+
+// ADMIN
+function loginAdmin(){
+  const pw=document.getElementById('adm-p').value;const s=DB.gd('settings',{adminPass:'admin2024'});
+  if(pw!==s.adminPass)return toast('كلمة مرور الإدارة غير صحيحة','error');
+  CU={type:'admin'};showPage('admin');renderAdmStats();renderPendList();loadSettings();
+}
+function logout(){CU=null;showPage('home');['sl-u','sl-p','tl-u','tl-p','adm-p'].forEach(i=>document.getElementById(i).value='');}
+
+// STUDENT TABS
+function swSTab(tab,btn){
+  ['content','videos','quizzes','forum','subs','scores','msgs'].forEach(t=>{const el=document.getElementById('ss-'+t);if(el)el.classList.toggle('active',t===tab);});
+  document.querySelectorAll('#page-student .dash-nav-btn').forEach(b=>b.classList.remove('active'));btn?.classList.add('active');
+  if(tab==='subs'){renderSSubs();markSubsRead();}
+  if(tab==='scores'){renderSScores();renderSPoints();renderSCerts();markRewardsRead();}
+  if(tab==='msgs'){renderSConvos();markMsgsRead('student');}
+  if(tab==='videos')renderSVideos();
+  if(tab==='quizzes')renderSQuizzes();
+  if(tab==='forum')renderForumList('s-forum-list','s-forum-empty');
+}
+
+// TEACHER TABS
+function swTTab(tab,btn){
+  ['publish','videos','quizzes','forum','attendance','subs','msgs','posts'].forEach(t=>{const el=document.getElementById('ts-'+t);if(el)el.classList.toggle('active',t===tab);});
+  document.querySelectorAll('#page-teacher .dash-nav-btn').forEach(b=>b.classList.remove('active'));btn?.classList.add('active');
+  if(tab==='subs'){renderTSubs();markTSubsRead();}
+  if(tab==='posts')renderTPosts();
+  if(tab==='msgs'){renderTConvos();markMsgsRead('teacher');}
+  if(tab==='videos')renderTVideos();
+  if(tab==='quizzes')renderTQuizzes();
+  if(tab==='forum')renderForumList('t-forum-list','t-forum-empty');
+  if(tab==='attendance')renderTAttendance();
+}
+
+// FILTER CONTENT
+let sFilter='all';
+function filterS(f,btn){sFilter=f;document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));btn?.classList.add('active');renderSContent();}
+
+async function renderSContent(){
+  if(!CU||CU.type!=='student')return;
+  const g=document.getElementById('s-grid'),e=document.getElementById('s-empty');
+  const ok = await loadContentFromCloud(CU.specialty);
+  if(!ok){
+    g.innerHTML='';
+    e.innerHTML='<div class="empty-icon">⚠️</div><p>تعذر الاتصال بالسيرفر لجلب الدروس. أعد المحاولة، أو تحقق من اتصالك بالإنترنت.</p>';
+    e.style.display='block';
+    return;
+  }
+  const content=DB.gd('content',[]);
+  let items=content.filter(c=>c.specialty===CU.specialty && (!c.cohortId || c.cohortId===CU.cohortId));
+  if(sFilter!=='all')items=items.filter(c=>c.category===sFilter);
+  items.sort((a,b)=>b.createdAt-a.createdAt);
+  if(!items.length){
+    g.innerHTML='';
+    e.innerHTML='<div class="empty-icon">📭</div><p>لا يوجد محتوى متاح في تخصصك حالياً</p>';
+    e.style.display='block';
+    return;
+  }
+  e.style.display='none';
+  const tc={درس:'tag-lesson','تمرين محلول':'tag-solved','تمرين للحل':'tag-exercise'};
+  const subs=DB.gd('submissions',[]);
+  g.innerHTML=items.map(item=>{
+    const mySub=subs.find(s=>s.contentId===item.id&&s.studentUsername===CU.username);
+    const dlCheck=item.deadline?isSubmissionAllowed(item):null;
+    return`<div class="content-card" onclick="viewContent('${item.id}')">
+      <h4>${item.title}</h4>
+      <div class="meta" style="margin-bottom:8px">أ. ${item.teacherName} • ${item.subject||''}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span class="tag ${tc[item.category]||''}">${item.category}</span>
+        <span style="font-size:11px;color:var(--text3)">${fd(item.createdAt)}</span>
+      </div>
+      ${item.deadline?`<div style="margin-top:6px">${renderDeadlineTimerHTML(item.deadline)}</div>`:''}
+      ${item.category==='تمرين للحل'?`<div style="font-size:11px;margin-top:8px;font-weight:600;color:${mySub?(mySub.status==='graded'?'#006600':'#856404'):'#333'}">${mySub?(mySub.status==='graded'?'✅ تم التصحيح: '+mySub.score+'/20':'⏳ في انتظار التصحيح'):(dlCheck&&!dlCheck.allowed?'⛔ انتهى وقت التسليم':'📤 انقر لإرسال حلك')}</div>`:''}`
+    +`</div>`;
+  }).join('');
+}
+
+function isSubmissionAllowed(content){
+  if(!content.deadline)return{allowed:true};
+  const now=Date.now();const dead=new Date(content.deadline).getTime();
+  if(now>dead)return{allowed:false,reason:'انتهت مدة تسليم هذا الواجب بتاريخ '+fdt(dead)};
+  const hoursLeft=(dead-now)/3600000;
+  return{allowed:true,warning:hoursLeft<24?`⚠️ تبقى ${Math.ceil(hoursLeft)} ساعة فقط للتسليم`:null,deadline:dead};
+}
+function renderDeadlineTimerHTML(deadline){
+  if(!deadline)return'';
+  const dl=new Date(deadline).getTime();const diff=dl-Date.now();
+  if(diff<=0)return'<span class="deadline-timer deadline-closed">⛔ انتهى وقت التسليم</span>';
+  const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000);
+  const cls=diff<86400000?'deadline-soon':'deadline-open';
+  return`<span class="deadline-timer ${cls}">⏱ متبقٍ: ${d>0?d+' يوم ':''}${h} ساعة ${m} دقيقة</span>`;
+}
+
+function viewContent(cid){
+  const content=DB.gd('content',[]);
+  const item=content.find(c=>c.id===cid);if(!item)return;
+  viewTarget=item;
+  // Clean previous attachment section
+  const oldAtt=document.getElementById('mc-attachments');if(oldAtt)oldAtt.remove();
+  document.getElementById('mc-title').textContent=item.title;
+  const tc={درس:'tag-lesson','تمرين محلول':'tag-solved','تمرين للحل':'tag-exercise'};
+  document.getElementById('mc-type').className='tag '+(tc[item.category]||'');
+  document.getElementById('mc-type').textContent=item.category;
+  document.getElementById('mc-teacher').textContent='أ. '+item.teacherName;
+  document.getElementById('mc-subj').textContent=item.subject||'';
+  document.getElementById('mc-body').textContent=item.body;
+  // Show attachments
+  let attHTML='';
+  if(item.attachments&&item.attachments.length){
+    attHTML='<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border2)"><div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:8px">📎 الملفات المرفقة:</div><div style="display:flex;flex-wrap:wrap;gap:8px">';
+    attHTML+=item.attachments.map(a=>`<a href="${a.data}" download="${a.name}" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);font-size:12px;color:var(--text);text-decoration:none" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">${fileIcon(a.name)} ${a.name} <span style="color:var(--text3)">(${(a.size/1024).toFixed(0)}KB)</span></a>`).join('');
+    attHTML+='</div></div>';
+  }
+  document.getElementById('mc-body').insertAdjacentHTML('afterend', attHTML ? `<div id="mc-attachments">${attHTML}</div>` : '');
+  const sa=document.getElementById('mc-submit-area');
+  const dlArea=document.getElementById('mc-deadline-area');
+  if(item.category==='تمرين للحل'){
+    if(item.deadline){
+      dlArea.style.display='block';
+      dlArea.innerHTML=renderDeadlineTimerHTML(item.deadline)+`<span style="font-size:11px;color:var(--text3);margin-right:8px">آخر أجل: ${fdt(item.deadline)}</span>`;
+    }else{dlArea.style.display='none';dlArea.innerHTML='';}
+  }else{dlArea.style.display='none';}
+  if(item.category==='تمرين للحل'&&CU?.type==='student'){
+    sa.style.display='block';
+    const subs=DB.gd('submissions',[]);
+    const ex=subs.find(s=>s.contentId===item.id&&s.studentUsername===CU.username);
+    const alr=document.getElementById('mc-already');
+    const closedMsg=document.getElementById('mc-closed-msg');
+    const submitForm=document.getElementById('mc-submit-form');
+    const check=isSubmissionAllowed(item);
+    if(!check.allowed){
+      closedMsg.style.display='block';submitForm.style.display='none';alr.style.display='none';
+    }else{
+      closedMsg.style.display='none';submitForm.style.display='block';
+      if(ex){alr.style.display='block';document.getElementById('mc-ans').value=ex.answer||'';}
+      else{alr.style.display='none';document.getElementById('mc-ans').value='';}
+    }
+  }else{sa.style.display='none';}
+  openModal('modal-content');
+}
+
+function submitAnswer(){
+  if(!CU||CU.type!=='student'||!viewTarget)return;
+  // Server-side style re-check: block submission if deadline passed
+  const check=isSubmissionAllowed(viewTarget);
+  if(!check.allowed)return toast('⛔ '+check.reason,'error');
+  const ans=document.getElementById('mc-ans').value.trim();
+  if(!ans)return toast('اكتب إجابتك أولاً','error');
+  let subs=DB.gd('submissions',[]);
+  const ex=subs.find(s=>s.contentId===viewTarget.id&&s.studentUsername===CU.username);
+  if(ex){ex.answer=ans;ex.submittedAt=Date.now();ex.status='submitted';ex.score=null;ex.comment='';ex.readByTeacher=false;ex.readByStudent=false;}
+  else subs.push({id:uid(),contentId:viewTarget.id,contentTitle:viewTarget.title,teacherUsername:viewTarget.teacherUsername,teacherName:viewTarget.teacherName,studentUsername:CU.username,studentName:CU.fullName,specialty:CU.specialty,subject:viewTarget.subject,answer:ans,submittedAt:Date.now(),status:'submitted',score:null,comment:'',readByTeacher:false,readByStudent:false});
+  DB.set('submissions',subs);
+  // Auto-open chat with teacher so student can add a note
+  toast('تم إرسال حلك للأستاذ بنجاح 📤','ok');
+  closeModal('modal-content');renderSContent();updTNotif();
+}
+
+function markSubsRead(){
+  let subs=DB.gd('submissions',[]);
+  subs.forEach(s=>{if(s.studentUsername===CU?.username&&s.status==='graded')s.readByStudent=true;});
+  DB.set('submissions',subs);updSNotif();
+}
+function markTSubsRead(){
+  let subs=DB.gd('submissions',[]);
+  subs.forEach(s=>{if(s.teacherUsername===CU?.username)s.readByTeacher=true;});
+  DB.set('submissions',subs);updTNotif();
+}
+function updSNotif(){
+  if(!CU||CU.type!=='student')return;
+  const ng=DB.gd('submissions',[]).filter(s=>s.studentUsername===CU.username&&s.status==='graded'&&!s.readByStudent).length;
+  const d=document.getElementById('sn-grades');if(d){d.style.display=ng>0?'flex':'none';d.textContent=ng;}
+  const nm=DB.gd('messages',[]).filter(m=>m.toUsername===CU.username&&!m.read).length;
+  const dm=document.getElementById('sn-msgs');if(dm){dm.style.display=nm>0?'flex':'none';dm.textContent=nm;}
+  const np=DB.gd('points',[]).filter(p=>p.studentUsername===CU.username&&!p.readByStudent).length;
+  const nc=DB.gd('certificates',[]).filter(c=>c.studentUsername===CU.username&&!c.readByStudent).length;
+  const dr=document.getElementById('sn-rewards');if(dr){const total=np+nc;dr.style.display=total>0?'flex':'none';dr.textContent=total;}
+}
+function markRewardsRead(){
+  if(!CU||CU.type!=='student')return;
+  let points=DB.gd('points',[]);let changedP=false;
+  points.forEach(p=>{if(p.studentUsername===CU.username&&!p.readByStudent){p.readByStudent=true;changedP=true;}});
+  if(changedP)DB.set('points',points);
+  let certs=DB.gd('certificates',[]);let changedC=false;
+  certs.forEach(c=>{if(c.studentUsername===CU.username&&!c.readByStudent){c.readByStudent=true;changedC=true;}});
+  if(changedC)DB.set('certificates',certs);
+  updSNotif();
+}
+function updTNotif(){
+  if(!CU||CU.type!=='teacher')return;
+  const ns=DB.gd('submissions',[]).filter(s=>s.teacherUsername===CU.username&&!s.readByTeacher).length;
+  const d=document.getElementById('tn-new');if(d){d.style.display=ns>0?'flex':'none';d.textContent=ns;}
+  const nm=DB.gd('messages',[]).filter(m=>m.toUsername===CU.username&&!m.read).length;
+  const dm=document.getElementById('tn-msgs');if(dm){dm.style.display=nm>0?'flex':'none';dm.textContent=nm;}
+}
+
+function renderSSubs(){
+  if(!CU||CU.type!=='student')return;
+  const subs=DB.gd('submissions',[]).filter(s=>s.studentUsername===CU.username).sort((a,b)=>b.submittedAt-a.submittedAt);
+  const list=document.getElementById('s-subs-list'),empty=document.getElementById('s-subs-empty');
+  if(!subs.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  list.innerHTML=subs.map(s=>`
+    <div class="sub-item${s.status==='graded'&&!s.readByStudent?' new-item':''}">
+      <div class="sub-header">
+        <div>
+          <div style="font-size:14px;font-weight:700">${s.contentTitle}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:3px">أ. ${s.teacherName} • ${s.subject||''} • ${fdt(s.submittedAt)}</div>
+        </div>
+        <span class="tag ${s.status==='graded'?'tag-graded':'tag-sub'}">${s.status==='graded'?'مصحح ✓':'في الانتظار'}</span>
+      </div>
+      <div class="sub-answer">${s.answer}</div>
+      ${s.status==='graded'?`
+        <div class="grade-box">
+          <div style="font-size:12px;color:var(--text3);margin-bottom:6px">تقييم أستاذ ${s.teacherName}:</div>
+          <span class="score-badge ${scC(s.score)}" style="font-size:16px">${s.score} / 20</span>
+          ${s.comment?`<div style="font-size:13px;color:var(--text2);margin-top:8px;padding-top:8px;border-top:1px solid var(--border2);line-height:1.6">💬 ${s.comment}</div>`:''}
+        </div>
+        <button class="btn btn-sm" style="margin-top:8px" onclick="openChatWithTeacher('${s.teacherUsername}','${s.teacherName}')">💬 راسل الأستاذ</button>
+        `:'<div style="font-size:12px;color:var(--text3);margin-top:8px">⏳ بانتظار تصحيح الأستاذ...</div>'}
+    </div>
+  `).join('');
+}
+
+function renderSScores(){
+  if(!CU||CU.type!=='student')return;
+  const subs=DB.gd('submissions',[]).filter(s=>s.studentUsername===CU.username&&s.status==='graded').sort((a,b)=>b.gradedAt-a.gradedAt);
+  const list=document.getElementById('s-scores-list'),empty=document.getElementById('s-scores-empty');
+  if(!subs.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  const avg=(subs.reduce((a,s)=>a+parseFloat(s.score||0),0)/subs.length).toFixed(1);
+  list.innerHTML=`
+    <div class="stats-row" style="margin-bottom:20px">
+      <div class="stat-card"><div class="num">${subs.length}</div><div class="lbl">واجب مصحح</div></div>
+      <div class="stat-card"><div class="num"><span class="${scC(avg)}" style="border-radius:8px;padding:4px 8px">${avg}</span></div><div class="lbl">المعدل / 20</div></div>
+    </div>
+    <div style="overflow-x:auto"><table class="data-table">
+      <thead><tr><th>الواجب</th><th>المادة</th><th>الأستاذ</th><th>النقطة</th><th>التاريخ</th></tr></thead>
+      <tbody>${subs.map(s=>`<tr>
+        <td style="font-weight:600">${s.contentTitle}</td>
+        <td>${s.subject||'-'}</td>
+        <td>${s.teacherName}</td>
+        <td><span class="score-badge ${scC(s.score)}">${s.score} / 20</span></td>
+        <td style="font-size:12px;color:var(--text3)">${fd(s.gradedAt||s.submittedAt)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+}
+
+function renderTSubs(){
+  if(!CU||CU.type!=='teacher')return;
+  const subs=DB.gd('submissions',[]).filter(s=>s.teacherUsername===CU.username).sort((a,b)=>b.submittedAt-a.submittedAt);
+  const list=document.getElementById('t-subs-list'),empty=document.getElementById('t-subs-empty');
+  if(!subs.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  list.innerHTML=subs.map(s=>`
+    <div class="sub-item${!s.readByTeacher?' new-item':''}">
+      <div class="sub-header">
+        <div>
+          <div style="font-size:14px;font-weight:700">${s.studentName}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:3px">${SN[s.specialty]||s.specialty} • ${s.subject||''} • ${fdt(s.submittedAt)}</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-top:2px">📋 ${s.contentTitle}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+          <span class="tag ${s.status==='graded'?'tag-graded':'tag-sub'}">${s.status==='graded'?'مصحح':'جديد'}</span>
+          ${s.status==='graded'?`<span class="score-badge ${scC(s.score)}">${s.score}/20</span>`:''}
+        </div>
+      </div>
+      <div class="sub-answer">${s.answer}</div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        ${s.status==='graded'?`<button class="btn btn-sm" onclick="openGradeModal('${s.id}')">تعديل النقطة</button>`:`<button class="btn btn-dark btn-sm" onclick="openGradeModal('${s.id}')">منح النقطة 🎯</button>`}
+        <button class="btn btn-sm" onclick="openChatWithStudent('${s.studentUsername}','${s.studentName}')">💬 راسل الطالب</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openGradeModal(sid){
+  const subs=DB.gd('submissions',[]);const s=subs.find(x=>x.id===sid);if(!s)return;
+  gradeTarget=s;
+  document.getElementById('gm-info').innerHTML=`<div style="font-size:14px;font-weight:700;margin-bottom:4px">${s.studentName}</div><div style="font-size:12px;color:var(--text3)">${s.contentTitle} • ${s.subject||''} • ${fdt(s.submittedAt)}</div>`;
+  document.getElementById('gm-ans').textContent=s.answer;
+  document.getElementById('gm-score').value=s.score||'';
+  document.getElementById('gm-cmt').value=s.comment||'';
+  openModal('modal-grade');
+}
+function saveGrade(){
+  if(!gradeTarget)return;
+  const sv=document.getElementById('gm-score').value,cmt=document.getElementById('gm-cmt').value.trim();
+  if(sv===''||isNaN(sv))return toast('أدخل نقطة صحيحة بين 0 و 20','error');
+  const sc=parseFloat(sv);if(sc<0||sc>20)return toast('النقطة يجب أن تكون بين 0 و 20','error');
+  let subs=DB.gd('submissions',[]);const s=subs.find(x=>x.id===gradeTarget.id);if(!s)return;
+  s.score=sc;s.comment=cmt;s.status='graded';s.gradedAt=Date.now();s.readByStudent=false;
+  DB.set('submissions',subs);
+  // Send auto system message to student
+  sendSystemMsg(s.teacherUsername,s.studentUsername,`✅ تم تصحيح واجبك "${s.contentTitle}"\nالنقطة: ${sc}/20${cmt?'\nتعليق الأستاذ: '+cmt:''}`);
+  toast('تم إرسال النقطة للطالب ✓','ok');closeModal('modal-grade');gradeTarget=null;renderTSubs();updSNotif();
+}
+
+function toggleDeadlineBox(){
+  const tp=document.getElementById('u-type').value;
+  const box=document.getElementById('u-deadline-box');
+  box.style.display=tp==='تمرين للحل'?'block':'none';
+  if(tp!=='تمرين للحل')document.getElementById('u-deadline').value='';
+}
+function setDeadlinePreset(days){
+  const d=new Date(Date.now()+days*86400000);
+  const pad=n=>String(n).padStart(2,'0');
+  const val=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  document.getElementById('u-deadline').value=val;
+}
+
+async function uploadContent(){
+  if(!CU||CU.type!=='teacher')return;
+  const sp=document.getElementById('u-spec').value,cohortId=document.getElementById('u-cohort').value,sb=document.getElementById('u-subj').value.trim(),cd=document.getElementById('u-code').value.trim(),ti=document.getElementById('u-title').value.trim(),tp=document.getElementById('u-type').value,bd=document.getElementById('u-body').value.trim();
+  const deadlineVal=document.getElementById('u-deadline').value;
+  if(!sp||!sb||!ti||!bd)return toast('يرجى ملء جميع الحقول المطلوبة','error');
+  const deadline=(tp==='تمرين للحل'&&deadlineVal)?new Date(deadlineVal).toISOString():null;
+  const content=DB.gd('content',[]);
+  const attachments=pendingAttachments.map(a=>({name:a.name,size:a.size,type:a.type,data:a.data}));
+  const newItem={id:uid(),specialty:sp,cohortId:cohortId||null,subject:sb,subjectCode:cd,title:ti,category:tp,body:bd,deadline,attachments,teacherName:CU.fullName,teacherUsername:CU.username,createdAt:Date.now()};
+  content.unshift(newItem);
+  DB.set('content',content);toast('تم نشر المحتوى بنجاح','ok');
+  ['u-subj','u-code','u-title','u-body','u-deadline'].forEach(i=>document.getElementById(i).value='');document.getElementById('u-spec').value='';document.getElementById('u-cohort').innerHTML='<option value="">جميع دفعات هذا التخصص</option>';
+  document.getElementById('u-deadline-box').style.display='none';
+  pendingAttachments=[];renderAttachmentsList();
+  const fi=document.getElementById('u-file-info');if(fi)fi.style.display='none';
+  renderTPosts();
+  if(supabaseClient){
+    try{
+      await supabaseClient.from('content').insert({
+        id:newItem.id, specialty:newItem.specialty, cohort_id:newItem.cohortId, subject:newItem.subject,
+        subject_code:newItem.subjectCode, title:newItem.title, category:newItem.category, body:newItem.body,
+        deadline:newItem.deadline, attachments:newItem.attachments,
+        teacher_name:newItem.teacherName, teacher_username:newItem.teacherUsername
+      });
+    }catch(err){ console.error('تعذرت مزامنة المحتوى مع السيرفر:', err); toast('تم الحفظ محلياً لكن تعذرت مزامنته مع السيرفر','error'); }
+  }
+}
+
+async function renderTPosts(){
+  if(!CU||CU.type!=='teacher')return;
+  const list=document.getElementById('t-posts-list'),empty=document.getElementById('t-posts-empty');
+  const ok = await loadContentFromCloud();
+  if(!ok){
+    list.innerHTML='';
+    empty.innerHTML='<div class="empty-icon">⚠️</div><p>تعذر الاتصال بالسيرفر لجلب منشوراتك.</p>';
+    empty.style.display='block';
+    return;
+  }
+  const content=DB.gd('content',[]).filter(c=>c.teacherUsername===CU.username);
+  if(!content.length){
+    list.innerHTML='';
+    empty.innerHTML='<div class="empty-icon">📭</div><p>لم تنشر أي محتوى بعد</p>';
+    empty.style.display='block';
+    return;
+  }
+  empty.style.display='none';
+  const tc={درس:'tag-lesson','تمرين محلول':'tag-solved','تمرين للحل':'tag-exercise'};
+  const subs=DB.gd('submissions',[]);
+  list.innerHTML=content.map(item=>{
+    const sc=subs.filter(s=>s.contentId===item.id).length;
+    return`<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--border2);border-radius:var(--radius);margin-bottom:8px;background:var(--bg)">
+      <div>
+        <div style="font-size:14px;font-weight:600">${item.title}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:3px">${SN[item.specialty]||item.specialty} • ${item.subject} • ${fd(item.createdAt)}</div>
+        <div style="margin-top:4px;display:flex;gap:6px;align-items:center"><span class="tag ${tc[item.category]||''}">${item.category}</span>${item.category==='تمرين للحل'&&sc>0?`<span class="badge">${sc} إجابة</span>`:''}</div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="delContent('${item.id}')">حذف</button>
+    </div>`;
+  }).join('');
+}
+async function delContent(cid){
+  if(!confirm('هل أنت متأكد من حذف هذا المحتوى؟'))return;
+  let content=DB.gd('content',[]);content=content.filter(c=>c.id!==cid);DB.set('content',content);
+  toast('تم حذف المحتوى');renderTPosts();if(CU?.type==='admin'){renderAdmCont();renderAdmStats();}
+  if(supabaseClient){
+    try{ await supabaseClient.from('content').delete().eq('id',cid); }
+    catch(err){ console.error('تعذر حذف المحتوى من السيرفر:', err); }
+  }
+}
+
+// ===== MESSAGING SYSTEM =====
+function convoKey(u1,u2){return [u1,u2].sort().join('__')}
+
+function sendSystemMsg(fromU,toU,text){
+  const msgs=DB.gd('messages',[]);
+  msgs.push({id:uid(),fromUsername:fromU,toUsername:toU,text,sentAt:Date.now(),read:false,system:true,convoKey:convoKey(fromU,toU)});
+  DB.set('messages',msgs);
+}
+
+function openChatWithTeacher(teacherUsername,teacherName){
+  if(!CU)return;
+  chatConvoKey=convoKey(CU.username,teacherUsername);
+  chatPartner={username:teacherUsername,name:teacherName,role:'teacher'};
+  document.getElementById('chat-title').textContent='محادثة مع أ. '+teacherName;
+  const subs=DB.gd('submissions',[]).filter(s=>s.studentUsername===CU.username&&s.teacherUsername===teacherUsername&&s.status==='graded');
+  const avg=subs.length?(subs.reduce((a,s)=>a+parseFloat(s.score||0),0)/subs.length).toFixed(1):null;
+  document.getElementById('chat-sub').textContent=avg?'معدل نقاطك مع هذا الأستاذ: '+avg+'/20':'';
+  renderChatMessages();openModal('modal-chat');markMsgsReadConvo(chatConvoKey,CU.username);updSNotif();
+}
+
+function openChatWithStudent(studentUsername,studentName){
+  if(!CU)return;
+  chatConvoKey=convoKey(CU.username,studentUsername);
+  chatPartner={username:studentUsername,name:studentName,role:'student'};
+  document.getElementById('chat-title').textContent='محادثة مع الطالب '+studentName;
+  const subs=DB.gd('submissions',[]).filter(s=>s.studentUsername===studentUsername&&s.teacherUsername===CU.username&&s.status==='graded');
+  const avg=subs.length?(subs.reduce((a,s)=>a+parseFloat(s.score||0),0)/subs.length).toFixed(1):null;
+  document.getElementById('chat-sub').textContent=avg?'معدل نقاط الطالب: '+avg+'/20':'';
+  renderChatMessages();openModal('modal-chat');markMsgsReadConvo(chatConvoKey,CU.username);updTNotif();
+}
+
+function renderChatMessages(){
+  const msgs=DB.gd('messages',[]).filter(m=>m.convoKey===chatConvoKey).sort((a,b)=>a.sentAt-b.sentAt);
+  const container=document.getElementById('chat-messages');
+  if(!msgs.length){
+    container.innerHTML='<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">ابدأ المحادثة بكتابة رسالتك أدناه</div>';
+    return;
+  }
+  container.innerHTML=msgs.map(m=>{
+    const isMine=m.fromUsername===CU.username;
+    if(m.system){
+      return`<div style="text-align:center;margin:4px 0"><span style="background:var(--bg3);color:var(--text3);font-size:11px;padding:4px 10px;border-radius:10px;border:1px solid var(--border2)">${m.text}</span></div>`;
+    }
+    return`<div style="display:flex;flex-direction:column;align-items:${isMine?'flex-start':'flex-end'}">
+      <div class="chat-bubble ${isMine?'mine':'theirs'}">${m.text}
+        <div class="chat-meta">${fdt(m.sentAt)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  container.scrollTop=container.scrollHeight;
+}
+
+function sendChatMsg(){
+  if(!CU||!chatConvoKey||!chatPartner)return;
+  const inp=document.getElementById('chat-input');
+  const text=inp.value.trim();if(!text)return;
+  const msgs=DB.gd('messages',[]);
+  msgs.push({id:uid(),fromUsername:CU.username,fromName:CU.fullName,toUsername:chatPartner.username,text,sentAt:Date.now(),read:false,system:false,convoKey:chatConvoKey});
+  DB.set('messages',msgs);inp.value='';renderChatMessages();
+  if(CU.type==='student')updTNotif();else updSNotif();
+}
+
+function chatKeyDown(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatMsg();}}
+
+function markMsgsReadConvo(ck,myUsername){
+  let msgs=DB.gd('messages',[]);
+  msgs.forEach(m=>{if(m.convoKey===ck&&m.toUsername===myUsername)m.read=true;});
+  DB.set('messages',msgs);
+}
+function markMsgsRead(role){
+  if(!CU)return;
+  let msgs=DB.gd('messages',[]);
+  msgs.forEach(m=>{if(m.toUsername===CU.username)m.read=true;});
+  DB.set('messages',msgs);
+  if(role==='student')updSNotif();else updTNotif();
+}
+
+function getConvos(myUsername){
+  const msgs=DB.gd('messages',[]).filter(m=>!m.system&&(m.fromUsername===myUsername||m.toUsername===myUsername));
+  const keys={};
+  msgs.forEach(m=>{
+    const ck=m.convoKey;
+    if(!keys[ck]||m.sentAt>keys[ck].lastAt){
+      const partner=m.fromUsername===myUsername?m.toUsername:m.fromUsername;
+      const partnerName=m.fromUsername===myUsername?m.toName||chatPartner?.name:m.fromName;
+      keys[ck]={convoKey:ck,partnerUsername:partner,lastMsg:m.text,lastAt:m.sentAt,unread:0};
+    }
+  });
+  msgs.forEach(m=>{if(m.toUsername===myUsername&&!m.read)keys[m.convoKey]&&keys[m.convoKey].unread++; });
+  return Object.values(keys).sort((a,b)=>b.lastAt-a.lastAt);
+}
+
+function renderSConvos(){
+  if(!CU||CU.type!=='student')return;
+  // Build convos from submissions (each teacher they submitted to)
+  const subs=DB.gd('submissions',[]).filter(s=>s.studentUsername===CU.username);
+  const teachersSeen={};
+  subs.forEach(s=>{if(!teachersSeen[s.teacherUsername])teachersSeen[s.teacherUsername]={username:s.teacherUsername,name:s.teacherName};});
+  const msgs=DB.gd('messages',[]);
+  // Also add teachers from messages
+  msgs.filter(m=>m.fromUsername===CU.username||m.toUsername===CU.username).forEach(m=>{
+    const pu=m.fromUsername===CU.username?m.toUsername:m.fromUsername;
+    const pn=m.fromUsername===CU.username?'':m.fromName;
+    if(pu&&!teachersSeen[pu])teachersSeen[pu]={username:pu,name:pn};
+  });
+  const teachers=Object.values(teachersSeen);
+  const list=document.getElementById('s-convos-list'),empty=document.getElementById('s-convos-empty');
+  if(!teachers.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  const users=DB.gd('users',{});
+  list.innerHTML=teachers.map(t=>{
+    const ck=convoKey(CU.username,t.username);
+    const unread=msgs.filter(m=>m.convoKey===ck&&m.toUsername===CU.username&&!m.read).length;
+    const lastMsg=msgs.filter(m=>m.convoKey===ck).sort((a,b)=>b.sentAt-a.sentAt)[0];
+    const tUser=users[t.username];
+    const tName=tUser?.fullName||t.name||t.username;
+    const mySubs=subs.filter(s=>s.teacherUsername===t.username&&s.status==='graded');
+    const avg=mySubs.length?(mySubs.reduce((a,s)=>a+parseFloat(s.score||0),0)/mySubs.length).toFixed(1):null;
+    return`<div class="convo-item${unread>0?' unread':''}" onclick="openChatWithTeacher('${t.username}','${tName}')">
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
+        <div class="convo-avatar">${tName.charAt(0)}</div>
+        <div style="min-width:0;flex:1">
+          <div style="font-size:14px;font-weight:700">أ. ${tName}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lastMsg?lastMsg.text:'ابدأ المحادثة'}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+        ${unread>0?`<span class="notif-dot" style="position:static;width:20px;height:20px">${unread}</span>`:''}
+        ${avg?`<span class="score-badge ${scC(avg)}" style="font-size:11px">${avg}/20</span>`:''}
+        ${lastMsg?`<span style="font-size:10px;color:var(--text3)">${fd(lastMsg.sentAt)}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTConvos(){
+  if(!CU||CU.type!=='teacher')return;
+  const subs=DB.gd('submissions',[]).filter(s=>s.teacherUsername===CU.username);
+  const studentsSeen={};
+  subs.forEach(s=>{if(!studentsSeen[s.studentUsername])studentsSeen[s.studentUsername]={username:s.studentUsername,name:s.studentName,specialty:s.specialty};});
+  const msgs=DB.gd('messages',[]);
+  msgs.filter(m=>m.fromUsername===CU.username||m.toUsername===CU.username).forEach(m=>{
+    const pu=m.fromUsername===CU.username?m.toUsername:m.fromUsername;
+    const pn=m.fromUsername===CU.username?'':m.fromName;
+    if(pu&&!studentsSeen[pu])studentsSeen[pu]={username:pu,name:pn};
+  });
+  const students=Object.values(studentsSeen);
+  const list=document.getElementById('t-convos-list'),empty=document.getElementById('t-convos-empty');
+  if(!students.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  list.innerHTML=students.map(st=>{
+    const ck=convoKey(CU.username,st.username);
+    const unread=msgs.filter(m=>m.convoKey===ck&&m.toUsername===CU.username&&!m.read).length;
+    const lastMsg=msgs.filter(m=>m.convoKey===ck).sort((a,b)=>b.sentAt-a.sentAt)[0];
+    const mySubs=subs.filter(s=>s.studentUsername===st.username&&s.status==='graded');
+    const avg=mySubs.length?(mySubs.reduce((a,s)=>a+parseFloat(s.score||0),0)/mySubs.length).toFixed(1):null;
+    const pendingCount=subs.filter(s=>s.studentUsername===st.username&&s.status==='submitted').length;
+    return`<div class="convo-item${unread>0?' unread':''}" onclick="openChatWithStudent('${st.username}','${st.name||st.username}')">
+      <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
+        <div class="convo-avatar">${(st.name||st.username).charAt(0)}</div>
+        <div style="min-width:0;flex:1">
+          <div style="font-size:14px;font-weight:700">${st.name||st.username}</div>
+          <div style="display:flex;gap:6px;margin-top:3px;flex-wrap:wrap">
+            ${st.specialty?`<span class="badge" style="font-size:10px">${SN[st.specialty]||st.specialty}</span>`:''}
+            ${pendingCount>0?`<span class="badge" style="font-size:10px;background:#fff3cd;color:#856404">${pendingCount} واجب للتصحيح</span>`:''}
+          </div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lastMsg?lastMsg.text:'لا توجد رسائل بعد'}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+        ${unread>0?`<span class="notif-dot" style="position:static;width:20px;height:20px">${unread}</span>`:''}
+        ${avg?`<span class="score-badge ${scC(avg)}" style="font-size:11px">${avg}/20</span>`:''}
+        ${lastMsg?`<span style="font-size:10px;color:var(--text3)">${fd(lastMsg.sentAt)}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ADMIN
+function swAdmTab(tab){
+  ['pending','students','teachers','cohorts','attendance','certificates','points','content','settings'].forEach(t=>{const el=document.getElementById('adm-tab-'+t);if(el)el.style.display=t===tab?'block':'none';});
+  document.querySelectorAll('#page-admin .tabs .tab-btn').forEach((b,i)=>b.classList.toggle('active',['pending','students','teachers','cohorts','attendance','certificates','points','content','settings'][i]===tab));
+  if(tab==='students')renderStudList();if(tab==='teachers')renderTeachList();if(tab==='content')renderAdmCont();if(tab==='settings')loadSettings();
+  if(tab==='cohorts')renderCohortsList();
+  if(tab==='attendance')renderAdmAttendance();
+  if(tab==='certificates'){populateCertStudentSelect();renderCertificatesList();}
+  if(tab==='points'){populatePtsStudentSelect();renderPointsList();}
+}
+function renderAdmStats(){
+  const users=DB.gd('users',{});const pending=DB.gd('pending',[]);const content=DB.gd('content',[]);const subs=DB.gd('submissions',[]);const msgs=DB.gd('messages',[]);
+  const studs=Object.values(users).filter(u=>u.type==='student');const tchs=Object.values(users).filter(u=>u.type==='teacher');
+  document.getElementById('adm-stats').innerHTML=`
+    <div class="stat-card"><div class="num">${studs.length}</div><div class="lbl">طالب مسجل</div></div>
+    <div class="stat-card"><div class="num">${tchs.length}</div><div class="lbl">أستاذ</div></div>
+    <div class="stat-card"><div class="num">${pending.length}</div><div class="lbl">طلب معلق</div></div>
+    <div class="stat-card"><div class="num">${content.length}</div><div class="lbl">محتوى</div></div>
+    <div class="stat-card"><div class="num">${subs.length}</div><div class="lbl">واجب مرسل</div></div>
+    <div class="stat-card"><div class="num">${subs.filter(s=>s.status==='graded').length}</div><div class="lbl">واجب مصحح</div></div>
+    <div class="stat-card"><div class="num">${msgs.filter(m=>!m.system).length}</div><div class="lbl">رسالة</div></div>
+  `;
+}
+function renderPendList(){
+  const pending=DB.gd('pending',[]);
+  const list=document.getElementById('pend-list'),empty=document.getElementById('pend-empty');
+  if(!pending.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  const cohorts=DB.gd('cohorts',[]);
+  list.innerHTML=pending.map(p=>{
+    const coh=cohorts.find(c=>c.id===p.cohortId);
+    return`
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-size:15px;font-weight:700">${p.fullName}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px">التخصص: ${SN[p.specialty]||p.specialty}${coh?' | الدفعة: '+coh.name:''} | المادة: ${p.subject}${p.code?' | الرمز: '+p.code:''}</div>
+          <div style="font-size:12px;color:var(--text3)">اسم المستخدم: <b>${p.username}</b> | ${fd(p.createdAt)}</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-shrink:0">
+          <button class="btn btn-green btn-sm" onclick="approveS('${p.id}')">موافقة ✓</button>
+          <button class="btn btn-danger btn-sm" onclick="rejectS('${p.id}')">رفض ✗</button>
+        </div>
+      </div>
+    </div>
+  `;
+  }).join('');
+}
+async function approveS(pid){
+  let pending=DB.gd('pending',[]);const req=pending.find(p=>p.id===pid);if(!req)return;
+  const users=DB.gd('users',{});users[req.username]={...req,status:'approved',approvedAt:Date.now()};
+  DB.set('users',users);pending=pending.filter(p=>p.id!==pid);DB.set('pending',pending);
+  toast('تمت الموافقة على '+req.fullName,'ok');renderPendList();renderAdmStats();
+  if(supabaseClient){
+    try{
+      await supabaseClient.from('app_users').upsert({
+        username:req.username, full_name:req.fullName, type:'student', specialty:req.specialty,
+        cohort_id:req.cohortId, subject:req.subject, code:req.code, password:req.password, status:'approved'
+      });
+      await supabaseClient.from('pending_requests').delete().eq('username',req.username);
+    }catch(err){ console.error('تعذرت مزامنة الموافقة مع السيرفر:', err); }
+  }
+}
+async function rejectS(pid){
+  if(!confirm('هل تريد رفض هذا الطلب؟'))return;
+  let pending=DB.gd('pending',[]);const req=pending.find(p=>p.id===pid);
+  pending=pending.filter(p=>p.id!==pid);DB.set('pending',pending);
+  toast('تم رفض الطلب');renderPendList();renderAdmStats();
+  if(supabaseClient && req){
+    try{ await supabaseClient.from('pending_requests').delete().eq('username',req.username); }
+    catch(err){ console.error('تعذرت مزامنة الرفض مع السيرفر:', err); }
+  }
+}
+function renderStudList(){
+  const users=DB.gd('users',{});const subs=DB.gd('submissions',[]);const cohorts=DB.gd('cohorts',[]);
+  const studs=Object.values(users).filter(u=>u.type==='student').sort((a,b)=>b.createdAt-a.createdAt);
+  const tbody=document.getElementById('stud-tbody');
+  if(!studs.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text3)">لا يوجد طلاب</td></tr>';return}
+  tbody.innerHTML=studs.map(s=>{
+    const gs=subs.filter(x=>x.studentUsername===s.username&&x.status==='graded');
+    const avg=gs.length?(gs.reduce((a,x)=>a+parseFloat(x.score||0),0)/gs.length).toFixed(1):'-';
+    const coh=cohorts.find(c=>c.id===s.cohortId);
+    return`<tr><td style="font-weight:600">${s.fullName}</td><td>${SN[s.specialty]||s.specialty}</td><td>${coh?`<span class="cohort-badge">${coh.name}</span>`:'-'}</td><td>${s.subject||'-'}</td><td>${avg!=='-'?`<span class="score-badge ${scC(parseFloat(avg))}">${avg}/20</span>`:'-'}</td><td>${fd(s.createdAt)}</td><td><button class="btn btn-danger btn-sm" onclick="rmUser('${s.username}')">حذف</button></td></tr>`;
+  }).join('');
+}
+function renderTeachList(){
+  const users=DB.gd('users',{});
+  const tchs=Object.values(users).filter(u=>u.type==='teacher').sort((a,b)=>b.createdAt-a.createdAt);
+  const tbody=document.getElementById('teach-tbody');
+  if(!tchs.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text3)">لا يوجد أساتذة</td></tr>';return}
+  tbody.innerHTML=tchs.map(t=>`<tr><td style="font-weight:600">${t.fullName}</td><td>${t.subject||'-'}</td><td>${(t.specialties||[]).map(s=>SN[s]).join('، ')}</td><td><code style="font-size:11px">${t.nationalId||'-'}</code></td><td>${fd(t.createdAt)}</td><td><button class="btn btn-danger btn-sm" onclick="rmUser('${t.username}')">حذف</button></td></tr>`).join('');
+}
+function rmUser(un){
+  if(!confirm('هل تريد حذف هذا المستخدم؟'))return;
+  const users=DB.gd('users',{});delete users[un];DB.set('users',users);
+  toast('تم حذف المستخدم');renderStudList();renderTeachList();renderAdmStats();
+}
+function renderAdmCont(){
+  const content=DB.gd('content',[]).sort((a,b)=>b.createdAt-a.createdAt);
+  const list=document.getElementById('adm-cont-list');
+  if(!content.length){list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><p>لا يوجد محتوى</p></div>';return}
+  const tc={درس:'tag-lesson','تمرين محلول':'tag-solved','تمرين للحل':'tag-exercise'};
+  list.innerHTML=content.map(item=>`
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:12px;border:1px solid var(--border2);border-radius:var(--radius);margin-bottom:8px;background:var(--bg)">
+      <div><div style="font-size:14px;font-weight:600">${item.title}</div><div style="font-size:12px;color:var(--text3);margin-top:3px">${SN[item.specialty]||item.specialty} | ${item.subject} | ${item.teacherName} | ${fd(item.createdAt)}</div><span class="tag ${tc[item.category]||''}" style="margin-top:4px">${item.category}</span></div>
+      <button class="btn btn-danger btn-sm" onclick="delContent('${item.id}')">حذف</button>
+    </div>`).join('');
+}
+function loadSettings(){
+  const s=DB.gd('settings',{});
+  const n=document.getElementById('set-nm'),w=document.getElementById('set-wl');
+  if(n)n.value=s.name||'';if(w)w.value=s.welcome||'';
+}
+function saveSettings(){
+  const s=DB.gd('settings',{adminPass:'admin2024'});
+  s.name=document.getElementById('set-nm').value.trim();s.welcome=document.getElementById('set-wl').value.trim();
+  DB.set('settings',s);toast('تم حفظ الإعدادات','ok');
+}
+function changeAdminPass(){
+  const op=document.getElementById('set-op').value,np=document.getElementById('set-np').value;
+  const s=DB.gd('settings',{adminPass:'admin2024'});
+  if(op!==s.adminPass)return toast('كلمة المرور الحالية غير صحيحة','error');
+  if(np.length<4)return toast('كلمة المرور الجديدة قصيرة جداً','error');
+  s.adminPass=np;DB.set('settings',s);
+  document.getElementById('set-op').value='';document.getElementById('set-np').value='';toast('تم تغيير كلمة المرور','ok');
+}
+function exportData(type){
+  const users=DB.gd('users',{});const list=Object.values(users).filter(u=>u.type===type);
+  if(!list.length)return toast('لا توجد بيانات للتصدير','error');
+  const subs=DB.gd('submissions',[]);
+  let csv=type==='student'
+    ?'الاسم,التخصص,المادة,الرمز,اسم المستخدم,المعدل,تاريخ التسجيل\n'+list.map(s=>{const gs=subs.filter(x=>x.studentUsername===s.username&&x.status==='graded');const avg=gs.length?(gs.reduce((a,x)=>a+parseFloat(x.score||0),0)/gs.length).toFixed(1):'-';return`${s.fullName},${SN[s.specialty]||s.specialty},${s.subject||''},${s.code||''},${s.username},${avg},${fd(s.createdAt)}`;}).join('\n')
+    :'الاسم,المادة,التخصصات,البطاقة الوطنية,اسم المستخدم,تاريخ التسجيل\n'+list.map(t=>`${t.fullName},${t.subject||''},${(t.specialties||[]).map(s=>SN[s]).join('/')},${t.nationalId||''},${t.username},${fd(t.createdAt)}`).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(type==='student'?'الطلاب':'الأساتذة')+'_'+Date.now()+'.csv';a.click();toast('تم التصدير','ok');
+}
+// ===== FILE IMPORT SYSTEM =====
+// Supported: txt, md, html, json, csv, docx, pdf, images (OCR via canvas), rtf, odt
+
+function importFileToContent(input, targetId, infoId) {
+  const file = input.files[0];
+  if (!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  const infoEl = document.getElementById(infoId);
+
+  function setInfo(msg, ok=true) {
+    if (!infoEl) return;
+    infoEl.style.display = 'flex';
+    infoEl.style.alignItems = 'center';
+    infoEl.style.gap = '8px';
+    infoEl.style.background = ok ? '#f0f8f0' : '#fff3cd';
+    infoEl.style.color = ok ? '#155724' : '#856404';
+    infoEl.innerHTML = (ok ? '✅' : '⚠️') + ' ' + msg;
+  }
+
+  function fillTarget(text) {
+    const el = document.getElementById(targetId);
+    if (el) { el.value = text; el.dispatchEvent(new Event('input')); }
+    input.value = '';
+  }
+
+  function readAsText(enc='UTF-8') {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result);
+      r.onerror = rej;
+      r.readAsText(file, enc);
+    });
+  }
+
+  function readAsArrayBuffer() {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result);
+      r.onerror = rej;
+      r.readAsArrayBuffer(file);
+    });
+  }
+
+  function readAsDataURL() {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  }
+
+  setInfo('جاري معالجة الملف: ' + file.name + ' ...', true);
+
+  // ---- TXT / MD / JSON / HTML / HTM / RTF ----
+  if (['txt','md','json','html','htm','rtf','odt'].includes(ext)) {
+    readAsText().then(text => {
+      if (ext === 'html' || ext === 'htm') {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = text;
+        text = tmp.innerText || tmp.textContent;
+      }
+      if (ext === 'json') {
+        try { text = JSON.stringify(JSON.parse(text), null, 2); } catch(e) {}
+      }
+      fillTarget(text.trim());
+      setInfo('تم استيراد: ' + file.name + ' (' + text.length + ' حرف)', true);
+    }).catch(() => setInfo('تعذر قراءة الملف', false));
+    return;
+  }
+
+  // ---- CSV ----
+  if (ext === 'csv') {
+    readAsText().then(text => {
+      // Convert CSV to readable table text
+      const lines = text.trim().split('\n');
+      const formatted = lines.map((line, i) => {
+        const cols = line.split(',').map(c => c.replace(/^"|"$/g,'').trim());
+        return (i === 0 ? '[ ' + cols.join(' | ') + ' ]' : cols.join(' | '));
+      }).join('\n');
+      fillTarget(formatted);
+      setInfo('تم استيراد جدول CSV: ' + lines.length + ' سطر', true);
+    }).catch(() => setInfo('تعذر قراءة ملف CSV', false));
+    return;
+  }
+
+  // ---- DOCX (Word) via mammoth.js ----
+  if (ext === 'docx') {
+    const script = document.getElementById('mammoth-script');
+    const doExtract = () => {
+      readAsArrayBuffer().then(buf => {
+        mammoth.extractRawText({ arrayBuffer: buf }).then(result => {
+          const text = result.value.trim();
+          fillTarget(text);
+          setInfo('تم استيراد مستند Word: ' + file.name + ' (' + text.length + ' حرف)', true);
+          if (result.messages.length) console.log('mammoth warnings:', result.messages);
+        }).catch(e => setInfo('تعذر قراءة ملف Word: ' + e.message, false));
+      });
+    };
+    if (window.mammoth) { doExtract(); return; }
+    if (script) { script.onload = doExtract; return; }
+    const s = document.createElement('script');
+    s.id = 'mammoth-script';
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+    s.onload = doExtract;
+    s.onerror = () => setInfo('تعذر تحميل مكتبة Word. تحقق من الإنترنت.', false);
+    document.head.appendChild(s);
+    return;
+  }
+
+  // ---- PDF via pdf.js ----
+  if (ext === 'pdf') {
+    const doExtract = () => {
+      readAsArrayBuffer().then(buf => {
+        const loadingTask = pdfjsLib.getDocument({ data: buf });
+        loadingTask.promise.then(pdf => {
+          const pages = [];
+          const total = pdf.numPages;
+          let done = 0;
+          for (let i = 1; i <= total; i++) {
+            pdf.getPage(i).then(page => {
+              page.getTextContent().then(content => {
+                const pageText = content.items.map(s => s.str).join(' ');
+                pages[i - 1] = '— صفحة ' + i + ' —\n' + pageText;
+                done++;
+                if (done === total) {
+                  const full = pages.join('\n\n').trim();
+                  fillTarget(full);
+                  setInfo('تم استيراد PDF: ' + total + ' صفحة (' + full.length + ' حرف)', true);
+                }
+              });
+            });
+          }
+        }).catch(e => {
+          // PDF might be image-based — warn user
+          setInfo('ملف PDF يبدو ممسوحاً ضوئياً (صور). النص غير قابل للاستخراج مباشرة.', false);
+        });
+      });
+    };
+    if (window.pdfjsLib) { doExtract(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload = () => {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      doExtract();
+    };
+    s.onerror = () => setInfo('تعذر تحميل مكتبة PDF.', false);
+    document.head.appendChild(s);
+    return;
+  }
+
+  // ---- IMAGES (PNG / JPG / GIF / WEBP / BMP) ----
+  if (['png','jpg','jpeg','gif','webp','bmp'].includes(ext)) {
+    readAsDataURL().then(dataUrl => {
+      // Try OCR via Tesseract.js
+      const doOCR = () => {
+        setInfo('جاري التعرف على النص في الصورة... (قد يستغرق دقيقة)', true);
+        Tesseract.recognize(dataUrl, 'ara+fra+eng', {
+          logger: m => {
+            if (m.status === 'recognizing text') {
+              setInfo('جاري التعرف: ' + Math.round(m.progress * 100) + '%', true);
+            }
+          }
+        }).then(({ data: { text } }) => {
+          const clean = text.trim();
+          if (clean.length > 10) {
+            fillTarget(clean);
+            setInfo('تم استخراج النص من الصورة (' + clean.length + ' حرف)', true);
+          } else {
+            // No text found — insert image description placeholder
+            fillTarget('[صورة: ' + file.name + ']\n\n[لم يتم التعرف على نص في الصورة. يرجى كتابة المحتوى يدوياً]');
+            setInfo('الصورة لا تحتوي على نص واضح. يمكنك الكتابة يدوياً.', false);
+          }
+        }).catch(() => {
+          fillTarget('[صورة: ' + file.name + ']\n\n');
+          setInfo('تم إدراج اسم الصورة. يمكنك إكمال المحتوى يدوياً.', false);
+        });
+      };
+      if (window.Tesseract) { doOCR(); return; }
+      setInfo('جاري تحميل مكتبة التعرف على النص...', true);
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.1/tesseract.min.js';
+      s.onload = doOCR;
+      s.onerror = () => {
+        fillTarget('[صورة: ' + file.name + ']\n\n');
+        setInfo('تعذر تحميل مكتبة OCR. تم إدراج اسم الصورة.', false);
+      };
+      document.head.appendChild(s);
+    });
+    return;
+  }
+
+  // ---- DOC (old binary Word) ----
+  if (ext === 'doc') {
+    setInfo('ملف .doc (Word قديم) غير مدعوم مباشرة. يُرجى حفظه بصيغة .docx أو .txt ثم إعادة المحاولة.', false);
+    return;
+  }
+
+  // ---- Fallback: try read as text ----
+  readAsText().then(text => {
+    fillTarget(text.trim());
+    setInfo('تم استيراد الملف كنص: ' + file.name, true);
+  }).catch(() => setInfo('صيغة الملف غير مدعومة: .' + ext, false));
+}
+
+// ===== ATTACHMENTS (for teacher upload) =====
+let pendingAttachments = [];
+
+function addAttachment(input) {
+  const files = Array.from(input.files);
+  files.forEach(file => {
+    if (file.size > 5 * 1024 * 1024) {
+      toast('الملف ' + file.name + ' أكبر من 5MB', 'error'); return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+      pendingAttachments.push({ name: file.name, size: file.size, type: file.type, data: e.target.result });
+      renderAttachmentsList();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function renderAttachmentsList() {
+  const box = document.getElementById('u-attachments-box');
+  const list = document.getElementById('u-attachments-list');
+  if (!box || !list) return;
+  if (!pendingAttachments.length) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  list.innerHTML = pendingAttachments.map((a, i) => `
+    <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg2);font-size:12px">
+      ${fileIcon(a.name)} <span>${a.name}</span>
+      <span style="color:var(--text3)">(${(a.size/1024).toFixed(0)}KB)</span>
+      <button onclick="removeAttachment(${i})" style="background:none;border:none;cursor:pointer;color:#c00;font-size:14px;padding:0 2px;line-height:1">×</button>
+    </div>`).join('');
+}
+
+function removeAttachment(i) {
+  pendingAttachments.splice(i, 1);
+  renderAttachmentsList();
+}
+
+function fileIcon(name) {
+  const ext = name.split('.').pop().toLowerCase();
+  const icons = { pdf:'📄', doc:'📝', docx:'📝', txt:'📃', md:'📃', png:'🖼️', jpg:'🖼️', jpeg:'🖼️', gif:'🖼️', csv:'📊', json:'🗂️', mp4:'🎬', mp3:'🎵' };
+  return icons[ext] || '📎';
+}
+
+// ===================================================================
+// === FEATURE 7-A: VIDEO BANK (بنك الفيديوهات التطبيقية) ===
+// ===================================================================
+const VIDEO_MAX_SIZE = 200 * 1024 * 1024; // 200MB
+
+document.addEventListener('change', function(e){
+  if(e.target && e.target.id==='v-file'){
+    const f=e.target.files[0];
+    const info=document.getElementById('v-file-info');
+    if(!f){info.textContent='';return;}
+    if(f.size>VIDEO_MAX_SIZE){
+      toast('حجم الفيديو يتجاوز الحد المسموح (200MB)','error');
+      e.target.value='';info.textContent='';return;
+    }
+    info.textContent='تم اختيار: '+f.name+' ('+(f.size/1024/1024).toFixed(1)+'MB)';
+  }
+});
+
+async function uploadVideo(){
+  if(!CU||CU.type!=='teacher')return;
+  if(!supabaseClient)return toast('لم يتم ضبط اتصال Supabase بعد','error');
+  const sp=document.getElementById('v-spec').value,ti=document.getElementById('v-title').value.trim(),ds=document.getElementById('v-desc').value.trim();
+  const fileInput=document.getElementById('v-file');
+  const file=fileInput.files[0];
+  if(!sp||!ti||!file)return toast('يرجى اختيار التخصص والعنوان والملف','error');
+  if(file.size>VIDEO_MAX_SIZE)return toast('حجم الفيديو يتجاوز 200MB','error');
+
+  const progWrap=document.getElementById('v-progress-wrap'),progBar=document.getElementById('v-progress-bar'),progTxt=document.getElementById('v-progress-txt'),uploadBtn=document.getElementById('v-upload-btn');
+  progWrap.style.display='block';progBar.style.width='0%';progTxt.textContent='0%';
+  uploadBtn.disabled=true;uploadBtn.textContent='جاري الرفع...';
+
+  try{
+    const ext=(file.name.split('.').pop()||'mp4');
+    const path=`${CU.username}/${Date.now()}_${uid()}.${ext}`;
+    await uploadFileWithProgress(VIDEO_BUCKET, path, file, pct=>{
+      progBar.style.width=pct+'%';progTxt.textContent=pct+'%';
+    });
+    const videoUrl=getPublicVideoUrl(path);
+    const {error}=await supabaseClient.from('lessons').insert({
+      specialty:sp, title:ti, description:ds, teacher_name:CU.fullName, teacher_username:CU.username,
+      video_url:videoUrl, storage_path:path, file_name:file.name, size:file.size, views:0
+    });
+    if(error) throw error;
+    toast('تم رفع الفيديو ونشره في المنصة بنجاح 🎬','ok');
+    ['v-title','v-desc'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('v-spec').value='';fileInput.value='';document.getElementById('v-file-info').textContent='';
+    await loadLessonsFromCloud();
+    renderTVideos();
+  }catch(err){
+    console.error(err);
+    toast('فشل رفع الفيديو: '+(err.message||'تحقق من إعدادات Supabase'),'error');
+  }finally{
+    progWrap.style.display='none';
+    uploadBtn.disabled=false;uploadBtn.textContent='رفع الفيديو';
+  }
+}
+
+async function renderTVideos(){
+  if(!CU||CU.type!=='teacher')return;
+  const grid=document.getElementById('t-videos-grid'),empty=document.getElementById('t-videos-empty');
+  const ok = await loadLessonsFromCloud();
+  if(!ok){
+    grid.innerHTML='';
+    empty.innerHTML='<div class="empty-icon">⚠️</div><p>تعذر الاتصال بالسيرفر لجلب الدروس. تحقّق من رابط/مفتاح Supabase ومن صلاحيات RLS على جدول lessons (افتح Console للتفاصيل).</p>';
+    empty.style.display='block';
+    return;
+  }
+  const videos=DB.gd('videos',[]).filter(v=>v.teacherUsername===CU.username);
+  if(!videos.length){
+    grid.innerHTML='';
+    empty.innerHTML='<div class="empty-icon">🎬</div><p>لم ترفع أي فيديو بعد</p>';
+    empty.style.display='block';
+    return;
+  }
+  empty.style.display='none';
+  grid.innerHTML=videos.map(v=>`
+    <div class="video-card">
+      <div class="video-thumb" onclick="playVideo('${v.id}')">▶️</div>
+      <div class="video-info">
+        <h4>${v.title}</h4>
+        <div class="meta">${SN[v.specialty]} • ${v.views} مشاهدة • ${fd(v.createdAt)}</div>
+        <button class="btn btn-danger btn-sm" style="margin-top:8px;width:100%" onclick="deleteVideo('${v.id}')">حذف</button>
+      </div>
+    </div>`).join('');
+}
+
+async function renderSVideos(){
+  if(!CU||CU.type!=='student')return;
+  const grid=document.getElementById('s-videos-grid'),empty=document.getElementById('s-videos-empty');
+  const ok = await loadLessonsFromCloud(CU.specialty);
+  if(!ok){
+    grid.innerHTML='';
+    empty.innerHTML='<div class="empty-icon">⚠️</div><p>تعذر الاتصال بالسيرفر لجلب الدروس. أعد المحاولة، أو أبلغ الإدارة إن استمرت المشكلة.</p>';
+    empty.style.display='block';
+    return;
+  }
+  const videos=DB.gd('videos',[]).filter(v=>v.specialty===CU.specialty);
+  if(!videos.length){
+    grid.innerHTML='';
+    empty.innerHTML='<div class="empty-icon">🎬</div><p>لا توجد دروس فيديو منشورة بعد لتخصصك</p>';
+    empty.style.display='block';
+    return;
+  }
+  empty.style.display='none';
+  grid.innerHTML=videos.map(v=>`
+    <div class="video-card" onclick="playVideo('${v.id}')">
+      <div class="video-thumb">▶️</div>
+      <div class="video-info">
+        <h4>${v.title}</h4>
+        <div class="meta">أ. ${v.teacherName} • ${v.views} مشاهدة • ${fd(v.createdAt)}</div>
+      </div>
+    </div>`).join('');
+}
+
+function playVideo(vid){
+  const videos=DB.gd('videos',[]);
+  const v=videos.find(x=>x.id===vid);if(!v)return;
+  v.views=(v.views||0)+1;DB.set('videos',videos);
+  document.getElementById('vm-title').textContent=v.title;
+  document.getElementById('vm-player').src=v.data;
+  document.getElementById('vm-desc').textContent=v.description||'';
+  document.getElementById('vm-meta').textContent='أ. '+v.teacherName+' • '+SN[v.specialty]+' • '+fd(v.createdAt);
+  openModal('modal-video');
+  if(supabaseClient){
+    supabaseClient.from('lessons').update({views:v.views}).eq('id',vid).then(()=>{}).catch(err=>console.error(err));
+  }
+}
+async function deleteVideo(vid){
+  if(!confirm('حذف هذا الفيديو؟'))return;
+  const videos=DB.gd('videos',[]);
+  const v=videos.find(x=>x.id===vid);
+  if(supabaseClient){
+    try{
+      await supabaseClient.from('lessons').delete().eq('id',vid);
+      if(v && v.storagePath) await supabaseClient.storage.from(VIDEO_BUCKET).remove([v.storagePath]);
+    }catch(err){ console.error('تعذر حذف الفيديو من السيرفر:', err); }
+  }
+  await loadLessonsFromCloud();
+  toast('تم حذف الفيديو');renderTVideos();
+}
+
+// ===================================================================
+// === FEATURE 7-B: QUIZ SYSTEM (الاختبارات الآلية QCM) ===
+// ===================================================================
+function addQuizQuestion(){
+  quizQuestionDraft.push({id:uid(),question:'',options:['','','',''],correct:0});
+  renderQuizDraft();
+}
+function removeQuizQuestion(qid){
+  quizQuestionDraft=quizQuestionDraft.filter(q=>q.id!==qid);
+  renderQuizDraft();
+}
+function renderQuizDraft(){
+  const box=document.getElementById('q-questions-box');
+  if(!quizQuestionDraft.length){box.innerHTML='<p style="font-size:12px;color:var(--text3);margin-bottom:12px">لم تُضف أسئلة بعد. اضغط "إضافة سؤال".</p>';return}
+  box.innerHTML=quizQuestionDraft.map((q,qi)=>`
+    <div class="quiz-q">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:12px;font-weight:700;color:var(--text3)">السؤال ${qi+1}</span>
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeQuizQuestion('${q.id}')">حذف</button>
+      </div>
+      <div class="form-group"><input type="text" placeholder="نص السؤال" value="${q.question}" oninput="updateQuizDraft('${q.id}','question',this.value)"></div>
+      ${q.options.map((opt,oi)=>`
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <input type="radio" name="correct-${q.id}" ${q.correct===oi?'checked':''} onchange="updateQuizDraft('${q.id}','correct',${oi})">
+          <input type="text" placeholder="الخيار ${oi+1}" value="${opt}" style="flex:1" oninput="updateQuizOption('${q.id}',${oi},this.value)">
+        </div>`).join('')}
+      <div style="font-size:11px;color:var(--text3);margin-top:4px">حدد الدائرة بجانب الإجابة الصحيحة</div>
+    </div>`).join('');
+}
+function updateQuizDraft(qid,field,val){
+  const q=quizQuestionDraft.find(x=>x.id===qid);if(!q)return;
+  q[field]=val;
+}
+function updateQuizOption(qid,oi,val){
+  const q=quizQuestionDraft.find(x=>x.id===qid);if(!q)return;
+  q.options[oi]=val;
+}
+function publishQuiz(){
+  if(!CU||CU.type!=='teacher')return;
+  const sp=document.getElementById('q-spec').value,ti=document.getElementById('q-title').value.trim(),tm=document.getElementById('q-time').value;
+  if(!sp||!ti)return toast('يرجى اختيار التخصص وكتابة عنوان الاختبار','error');
+  if(!quizQuestionDraft.length)return toast('أضف سؤالاً واحداً على الأقل','error');
+  for(const q of quizQuestionDraft){
+    if(!q.question.trim())return toast('يوجد سؤال بدون نص','error');
+    if(q.options.some(o=>!o.trim()))return toast('يوجد خيار فارغ في أحد الأسئلة','error');
+  }
+  const quizzes=DB.gd('quizzes',[]);
+  quizzes.unshift({id:uid(),specialty:sp,title:ti,timeLimit:tm?parseInt(tm):null,questions:quizQuestionDraft.map(q=>({...q})),teacherName:CU.fullName,teacherUsername:CU.username,createdAt:Date.now()});
+  DB.set('quizzes',quizzes);toast('تم نشر الاختبار بنجاح 📋','ok');
+  quizQuestionDraft=[];renderQuizDraft();
+  ['q-title','q-time'].forEach(i=>document.getElementById(i).value='');document.getElementById('q-spec').value='';
+  renderTQuizzes();
+}
+function renderTQuizzes(){
+  if(!CU||CU.type!=='teacher')return;
+  const quizzes=DB.gd('quizzes',[]).filter(q=>q.teacherUsername===CU.username);
+  const list=document.getElementById('t-quizzes-list'),empty=document.getElementById('t-quizzes-empty');
+  if(!quizzes.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  const attempts=DB.gd('quizAttempts',[]);
+  list.innerHTML=quizzes.map(q=>{
+    const att=attempts.filter(a=>a.quizId===q.id);
+    const avg=att.length?(att.reduce((s,a)=>s+a.percentage,0)/att.length).toFixed(0):'-';
+    return`<div style="border:1.5px solid var(--border2);border-radius:var(--radius-lg);padding:14px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-size:14px;font-weight:700">${q.title}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:3px">${SN[q.specialty]} • ${q.questions.length} سؤال${q.timeLimit?' • '+q.timeLimit+' دقيقة':''} • ${fd(q.createdAt)}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:3px">${att.length} طالب أجرى الاختبار${att.length?' • المعدل العام: '+avg+'%':''}</div>
+        </div>
+        <button class="btn btn-danger btn-sm" onclick="deleteQuiz('${q.id}')">حذف</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function deleteQuiz(qid){
+  if(!confirm('حذف هذا الاختبار؟'))return;
+  let quizzes=DB.gd('quizzes',[]);quizzes=quizzes.filter(q=>q.id!==qid);DB.set('quizzes',quizzes);
+  toast('تم حذف الاختبار');renderTQuizzes();
+}
+function renderSQuizzes(){
+  if(!CU||CU.type!=='student')return;
+  const quizzes=DB.gd('quizzes',[]).filter(q=>q.specialty===CU.specialty);
+  const list=document.getElementById('s-quizzes-list'),empty=document.getElementById('s-quizzes-empty');
+  if(!quizzes.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  const attempts=DB.gd('quizAttempts',[]);
+  list.innerHTML=quizzes.map(q=>{
+    const myAttempt=attempts.find(a=>a.quizId===q.id&&a.studentUsername===CU.username);
+    return`<div style="border:1.5px solid var(--border2);border-radius:var(--radius-lg);padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-size:14px;font-weight:700">${q.title}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:3px">أ. ${q.teacherName} • ${q.questions.length} سؤال${q.timeLimit?' • '+q.timeLimit+' دقيقة':''}</div>
+      </div>
+      ${myAttempt
+        ?`<span class="score-badge ${scC(myAttempt.percentage/5)}">${myAttempt.score}/${myAttempt.maxScore} (${myAttempt.percentage}%)</span>`
+        :`<button class="btn btn-dark btn-sm" onclick="startQuiz('${q.id}')">ابدأ الاختبار</button>`}
+    </div>`;
+  }).join('');
+}
+function startQuiz(qid){
+  const quizzes=DB.gd('quizzes',[]);
+  const q=quizzes.find(x=>x.id===qid);if(!q)return;
+  const attempts=DB.gd('quizAttempts',[]);
+  if(attempts.find(a=>a.quizId===qid&&a.studentUsername===CU.username)){toast('لقد أجريت هذا الاختبار من قبل','error');return;}
+  activeQuizTarget=q;
+  document.getElementById('qz-title').textContent=q.title;
+  document.getElementById('qz-body').innerHTML=q.questions.map((qq,qi)=>`
+    <div class="quiz-q">
+      <div class="quiz-q-title">${qi+1}. ${qq.question}</div>
+      ${qq.options.map((opt,oi)=>`<div class="quiz-opt" data-qid="${qq.id}" data-oi="${oi}" onclick="selectQuizOption('${qq.id}',${oi},this)">${opt}</div>`).join('')}
+    </div>`).join('');
+  document.getElementById('qz-submit-btn').style.display='block';
+  document.getElementById('qz-submit-btn').disabled=false;
+  document.getElementById('qz-submit-btn').textContent='إرسال الإجابات';
+  quizAnswers={};
+  clearInterval(quizTimerInterval);
+  const timerEl=document.getElementById('qz-timer');
+  if(q.timeLimit){
+    let remaining=q.timeLimit*60;
+    timerEl.style.display='block';
+    timerEl.textContent='⏱ الوقت المتبقي: '+formatQuizTime(remaining);
+    quizTimerInterval=setInterval(()=>{
+      remaining--;
+      if(remaining<=0){clearInterval(quizTimerInterval);toast('انتهى الوقت! سيتم إرسال إجاباتك تلقائياً','error');submitQuiz();return;}
+      timerEl.textContent='⏱ الوقت المتبقي: '+formatQuizTime(remaining);
+    },1000);
+  }else{timerEl.style.display='none';}
+  openModal('modal-quiz');
+}
+function formatQuizTime(sec){const m=Math.floor(sec/60),s=sec%60;return m+':'+String(s).padStart(2,'0');}
+let quizAnswers={};
+function selectQuizOption(qid,oi,el){
+  quizAnswers[qid]=oi;
+  document.querySelectorAll(`.quiz-opt[data-qid="${qid}"]`).forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function submitQuiz(){
+  if(!activeQuizTarget)return;
+  clearInterval(quizTimerInterval);
+  const q=activeQuizTarget;
+  let score=0,maxScore=q.questions.length;
+  const details=q.questions.map(qq=>{
+    const isCorrect=quizAnswers[qq.id]===qq.correct;
+    if(isCorrect)score++;
+    return{questionId:qq.id,selected:quizAnswers[qq.id],correct:qq.correct,isCorrect};
+  });
+  const percentage=Math.round(score/maxScore*100);
+  const attempts=DB.gd('quizAttempts',[]);
+  attempts.push({id:uid(),quizId:q.id,quizTitle:q.title,studentUsername:CU.username,studentName:CU.fullName,teacherUsername:q.teacherUsername,score,maxScore,percentage,details,submittedAt:Date.now()});
+  DB.set('quizAttempts',attempts);
+  // Show results inline
+  document.querySelectorAll('.quiz-opt').forEach(el=>{
+    const qid=el.dataset.qid,oi=parseInt(el.dataset.oi);
+    const detail=details.find(d=>d.questionId===qid);
+    if(oi===detail.correct)el.classList.add('correct');
+    else if(oi===detail.selected&&!detail.isCorrect)el.classList.add('wrong');
+  });
+  document.getElementById('qz-body').insertAdjacentHTML('afterbegin',`<div class="quiz-result-badge ${scC(percentage/5)}">${score} / ${maxScore} (${percentage}%)</div>`);
+  document.getElementById('qz-submit-btn').style.display='none';
+  document.getElementById('qz-timer').style.display='none';
+  toast('تم إرسال إجاباتك وحفظ نتيجتك 🎯','ok');
+  activeQuizTarget=null;
+  renderSQuizzes();
+}
+
+// ===================================================================
+// === FEATURE 7-C: DISCUSSION FORUM (منتدى النقاش) ===
+// ===================================================================
+function openNewThreadModal(){openModal('modal-new-thread');}
+function createThread(){
+  if(!CU)return;
+  const ti=document.getElementById('nt-title').value.trim(),bd=document.getElementById('nt-body').value.trim();
+  if(!ti||!bd)return toast('يرجى ملء العنوان والتفاصيل','error');
+  const threads=DB.gd('threads',[]);
+  threads.unshift({id:uid(),specialty:CU.specialty,authorUsername:CU.username,authorName:CU.fullName,authorRole:CU.type,title:ti,body:bd,isPinned:false,createdAt:Date.now()});
+  DB.set('threads',threads);toast('تم نشر موضوعك بنجاح','ok');
+  document.getElementById('nt-title').value='';document.getElementById('nt-body').value='';
+  closeModal('modal-new-thread');
+  renderForumList(CU.type==='student'?'s-forum-list':'t-forum-list',CU.type==='student'?'s-forum-empty':'t-forum-empty');
+}
+function renderForumList(listId,emptyId){
+  if(!CU)return;
+  const threads=DB.gd('threads',[]).filter(t=>t.specialty===CU.specialty).sort((a,b)=>(b.isPinned-a.isPinned)||(b.createdAt-a.createdAt));
+  const list=document.getElementById(listId),empty=document.getElementById(emptyId);
+  if(!threads.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  const replies=DB.gd('replies',[]);
+  list.innerHTML=threads.map(t=>{
+    const repCount=replies.filter(r=>r.threadId===t.id).length;
+    return`<div class="forum-thread${t.isPinned?' pinned':''}" onclick="openThread('${t.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div>
+          <div style="font-size:14px;font-weight:700">${t.isPinned?'📌 ':''}${t.title}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px">${t.authorRole==='teacher'?'أ. ':''}${t.authorName} • ${fd(t.createdAt)} • ${repCount} رد</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function openThread(tid){
+  const threads=DB.gd('threads',[]);
+  const t=threads.find(x=>x.id===tid);if(!t)return;
+  activeThreadId=tid;
+  document.getElementById('th-title').textContent=t.title;
+  document.getElementById('th-meta').textContent=(t.authorRole==='teacher'?'أ. ':'')+t.authorName+' • '+fdt(t.createdAt);
+  document.getElementById('th-body').textContent=t.body;
+  renderReplies();
+  openModal('modal-thread');
+}
+function renderReplies(){
+  const replies=DB.gd('replies',[]).filter(r=>r.threadId===activeThreadId).sort((a,b)=>a.createdAt-b.createdAt);
+  const box=document.getElementById('th-replies');
+  if(!replies.length){box.innerHTML='<p style="font-size:12px;color:var(--text3)">لا توجد ردود بعد. كن أول من يجيب!</p>';return}
+  box.innerHTML=replies.map(r=>`
+    <div class="forum-reply${r.isAnswer?' answer':''}">
+      <div style="font-size:12px;font-weight:700;margin-bottom:4px">${r.isAnswer?'✅ ':''}${r.authorRole==='teacher'?'أ. ':''}${r.authorName} <span style="font-weight:400;color:var(--text3)">• ${fdt(r.createdAt)}</span></div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.6;white-space:pre-wrap">${r.body}</div>
+      ${CU&&CU.type==='teacher'&&!r.isAnswer?`<button class="btn btn-sm" style="margin-top:6px" onclick="markAsAnswer('${r.id}')">وضع كإجابة مقبولة</button>`:''}
+    </div>`).join('');
+}
+function postReply(){
+  if(!CU||!activeThreadId)return;
+  const bd=document.getElementById('th-reply-input').value.trim();
+  if(!bd)return toast('اكتب رداً أولاً','error');
+  const replies=DB.gd('replies',[]);
+  replies.push({id:uid(),threadId:activeThreadId,authorUsername:CU.username,authorName:CU.fullName,authorRole:CU.type,body:bd,isAnswer:false,createdAt:Date.now()});
+  DB.set('replies',replies);
+  document.getElementById('th-reply-input').value='';
+  toast('تم إرسال ردك','ok');
+  renderReplies();
+}
+function markAsAnswer(rid){
+  let replies=DB.gd('replies',[]);
+  const r=replies.find(x=>x.id===rid);if(!r)return;
+  replies.forEach(x=>{if(x.threadId===r.threadId)x.isAnswer=false;});
+  r.isAnswer=true;
+  DB.set('replies',replies);toast('تم تحديد الإجابة المقبولة','ok');renderReplies();
+}
+
+// ===================================================================
+// === FEATURE 6-A: TEACHER ATTENDANCE (مراقبة غيابات الأساتذة) ===
+// ===================================================================
+function markAttendance(status){
+  if(!CU||CU.type!=='teacher')return;
+  const today=new Date().toISOString().slice(0,10);
+  let attendance=DB.gd('attendance',[]);
+  const existing=attendance.find(a=>a.teacherUsername===CU.username&&a.date===today);
+  if(existing){existing.status=status;existing.updatedAt=Date.now();}
+  else attendance.push({id:uid(),teacherUsername:CU.username,teacherName:CU.fullName,date:today,status,createdAt:Date.now()});
+  DB.set('attendance',attendance);
+  toast(status==='present'?'تم تسجيلك حاضراً اليوم ✅':'تم تسجيلك غائباً اليوم','ok');
+  renderTAttendance();
+}
+function renderTAttendance(){
+  if(!CU||CU.type!=='teacher')return;
+  const attendance=DB.gd('attendance',[]).filter(a=>a.teacherUsername===CU.username).sort((a,b)=>b.createdAt-a.createdAt);
+  const list=document.getElementById('t-attendance-list'),empty=document.getElementById('t-attendance-empty');
+  if(!attendance.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  list.innerHTML=attendance.map(a=>`
+    <div class="attendance-row ${a.status==='present'?'attend-present':'attend-absent'}">
+      <span style="font-size:13px;font-weight:600">${fd(a.date)}</span>
+      <span style="font-size:12px;font-weight:700">${a.status==='present'?'✅ حاضر':'❌ غائب'}</span>
+    </div>`).join('');
+}
+function renderAdmAttendance(){
+  const attendance=DB.gd('attendance',[]).sort((a,b)=>b.createdAt-a.createdAt);
+  const list=document.getElementById('adm-attendance-list'),empty=document.getElementById('adm-attendance-empty');
+  if(!attendance.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  list.innerHTML=attendance.map(a=>`
+    <div class="attendance-row ${a.status==='present'?'attend-present':'attend-absent'}">
+      <span style="font-size:13px;font-weight:600">${a.teacherName} <span style="font-weight:400;color:var(--text3)">• ${fd(a.date)}</span></span>
+      <span style="font-size:12px;font-weight:700">${a.status==='present'?'✅ حاضر':'❌ غائب'}</span>
+    </div>`).join('');
+}
+
+// ===================================================================
+// === FEATURE 6-B: DIGITAL CERTIFICATES (شهادات النجاح الرقمية) ===
+// ===================================================================
+function populateCertStudentSelect(){
+  const users=DB.gd('users',{});
+  const studs=Object.values(users).filter(u=>u.type==='student');
+  const sel=document.getElementById('cert-student');
+  sel.innerHTML='<option value="">اختر طالباً</option>'+studs.map(s=>`<option value="${s.username}">${s.fullName} - ${SN[s.specialty]}</option>`).join('');
+}
+async function issueCertificate(){
+  const un=document.getElementById('cert-student').value;
+  if(!un)return toast('يرجى اختيار طالب','error');
+  const users=DB.gd('users',{});const student=users[un];if(!student)return;
+  const subs=DB.gd('submissions',[]).filter(s=>s.studentUsername===un&&s.status==='graded');
+  const avg=subs.length?(subs.reduce((a,s)=>a+parseFloat(s.score||0),0)/subs.length).toFixed(1):'0.0';
+  const cohorts=DB.gd('cohorts',[]);const coh=cohorts.find(c=>c.id===student.cohortId);
+  const certificates=DB.gd('certificates',[]);
+  const cert={id:uid(),studentUsername:un,studentName:student.fullName,specialty:student.specialty,cohortName:coh?coh.name:'-',average:avg,issuedAt:Date.now(),verifyCode:uid().toUpperCase()};
+  certificates.unshift(cert);DB.set('certificates',certificates);
+  toast('تم إصدار الشهادة بنجاح 🎓','ok');
+  renderCertificatesList();
+  viewCertificate(cert.id);
+  if(supabaseClient){
+    try{
+      await supabaseClient.from('certificates').insert({
+        student_username:cert.studentUsername, student_name:cert.studentName, specialty:cert.specialty,
+        cohort_name:cert.cohortName, average:cert.average, verify_code:cert.verifyCode
+      });
+    }catch(err){ console.error('تعذرت مزامنة الشهادة مع السيرفر:', err); }
+  }
+}
+function renderCertificatesList(){
+  const certificates=DB.gd('certificates',[]);
+  const list=document.getElementById('certificates-list'),empty=document.getElementById('certificates-empty');
+  if(!certificates.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  list.innerHTML=certificates.map(c=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1.5px solid var(--border2);border-radius:var(--radius-lg);margin-bottom:8px;background:var(--bg)">
+      <div>
+        <div style="font-size:14px;font-weight:700">${c.studentName}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:3px">${SN[c.specialty]} • معدل ${c.average}/20 • ${fd(c.issuedAt)}</div>
+      </div>
+      <button class="btn btn-sm" onclick="viewCertificate('${c.id}')">عرض الشهادة</button>
+    </div>`).join('');
+}
+function viewCertificate(certId){
+  const certificates=DB.gd('certificates',[]);
+  const c=certificates.find(x=>x.id===certId);if(!c)return;
+  const settings=DB.gd('settings',{});
+  document.getElementById('cert-render').innerHTML=`
+    <div class="cert-card">
+      <h2>${settings.name||'المعهد المختص في التكوين المهني'}</h2>
+      <div style="font-size:13px;color:var(--text3)">الشهيد بن سعدة محمد - السوقر</div>
+      <div class="cert-line"></div>
+      <div style="font-size:13px;color:var(--text3)">تشهد إدارة المعهد بأن المتكون(ة)</div>
+      <div class="cert-name">${c.studentName}</div>
+      <div style="font-size:13px;color:var(--text2)">قد أتم بنجاح تكوينه في تخصص</div>
+      <div style="font-size:18px;font-weight:700;margin:8px 0">${SN[c.specialty]||c.specialty}</div>
+      ${c.cohortName!=='-'?`<div style="font-size:12px;color:var(--text3)">${c.cohortName}</div>`:''}
+      <div class="cert-line"></div>
+      <div style="font-size:13px;color:var(--text2)">بمعدل عام قدره</div>
+      <div style="font-size:24px;font-weight:800;margin:6px 0">${c.average} / 20</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:16px">تاريخ الإصدار: ${fd(c.issuedAt)} | رمز التحقق: ${c.verifyCode}</div>
+    </div>`;
+  openModal('modal-cert');
+}
+
+// ===================================================================
+// ==================== نقاط تقدير من الإدارة للطلاب ==================
+// ===================================================================
+function populatePtsStudentSelect(){
+  const users=DB.gd('users',{});
+  const studs=Object.values(users).filter(u=>u.type==='student');
+  const sel=document.getElementById('pts-student');
+  sel.innerHTML='<option value="">اختر طالباً</option>'+studs.map(s=>`<option value="${s.username}">${s.fullName} - ${SN[s.specialty]}</option>`).join('');
+}
+async function sendPoints(){
+  const un=document.getElementById('pts-student').value;
+  const amountRaw=document.getElementById('pts-amount').value;
+  const reason=document.getElementById('pts-reason').value.trim();
+  if(!un)return toast('يرجى اختيار طالب','error');
+  const amount=parseFloat(amountRaw);
+  if(!amountRaw||isNaN(amount)||amount<=0)return toast('يرجى إدخال عدد نقاط صحيح أكبر من 0','error');
+  const users=DB.gd('users',{});const student=users[un];if(!student)return toast('لم يتم العثور على الطالب','error');
+
+  const points=DB.gd('points',[]);
+  const rec={id:uid(),studentUsername:un,studentName:student.fullName,amount,reason,sentAt:Date.now(),readByStudent:false};
+  points.unshift(rec);DB.set('points',points);
+
+  toast('تم إرسال '+amount+' نقطة إلى '+student.fullName+' ⭐','ok');
+  document.getElementById('pts-amount').value='';document.getElementById('pts-reason').value='';document.getElementById('pts-student').value='';
+  renderPointsList();
+
+  if(supabaseClient){
+    try{
+      await supabaseClient.from('points').insert({
+        student_username:rec.studentUsername, student_name:rec.studentName, amount:rec.amount, reason:rec.reason
+      });
+    }catch(err){ console.error('تعذرت مزامنة النقاط مع السيرفر:', err); }
+  }
+}
+function renderPointsList(){
+  const points=DB.gd('points',[]);
+  const list=document.getElementById('points-list'),empty=document.getElementById('points-empty');
+  if(!points.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  list.innerHTML=points.map(p=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1.5px solid var(--border2);border-radius:var(--radius-lg);margin-bottom:8px;background:var(--bg)">
+      <div>
+        <div style="font-size:14px;font-weight:700">${p.studentName} <span style="color:var(--text3);font-weight:400">— +${p.amount} نقطة ⭐</span></div>
+        ${p.reason?`<div style="font-size:12px;color:var(--text3);margin-top:3px">${p.reason}</div>`:''}
+      </div>
+      <div style="font-size:11px;color:var(--text3)">${fd(p.sentAt)}</div>
+    </div>`).join('');
+}
+
+// ---- عرض النقاط والشهادات في لوحة الطالب ----
+function renderSPoints(){
+  if(!CU||CU.type!=='student')return;
+  const points=DB.gd('points',[]).filter(p=>p.studentUsername===CU.username).sort((a,b)=>b.sentAt-a.sentAt);
+  const list=document.getElementById('s-points-list'),empty=document.getElementById('s-points-empty');
+  if(!points.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  const total=points.reduce((a,p)=>a+parseFloat(p.amount||0),0);
+  list.innerHTML=`<div style="font-size:13px;color:var(--text3);margin-bottom:10px">مجموع نقاطك: <strong style="color:var(--text)">${total}</strong></div>`
+    +points.map(p=>`
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1.5px solid var(--border2);border-radius:var(--radius-lg);margin-bottom:8px;background:var(--bg)">
+        <div>
+          <div style="font-size:14px;font-weight:700">+${p.amount} نقطة ⭐</div>
+          ${p.reason?`<div style="font-size:12px;color:var(--text3);margin-top:3px">${p.reason}</div>`:''}
+        </div>
+        <div style="font-size:11px;color:var(--text3)">${fd(p.sentAt)}</div>
+      </div>`).join('');
+}
+function renderSCerts(){
+  if(!CU||CU.type!=='student')return;
+  const certs=DB.gd('certificates',[]).filter(c=>c.studentUsername===CU.username).sort((a,b)=>b.issuedAt-a.issuedAt);
+  const list=document.getElementById('s-certs-list'),empty=document.getElementById('s-certs-empty');
+  if(!certs.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
+  list.innerHTML=certs.map(c=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1.5px solid var(--border2);border-radius:var(--radius-lg);margin-bottom:8px;background:var(--bg)">
+      <div>
+        <div style="font-size:14px;font-weight:700">شهادة تخصص ${SN[c.specialty]||c.specialty}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:3px">معدل ${c.average}/20 • ${fd(c.issuedAt)}</div>
+      </div>
+      <button class="btn btn-sm" onclick="viewCertificate('${c.id}')">عرض الشهادة</button>
+    </div>`).join('');
+}
+
+initDB();
+</script>
+</body>
+</html>
