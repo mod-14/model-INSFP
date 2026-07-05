@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">بوابة المعهد</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --blue:#3498db;
+  --blue-dark:#2980b9;
+  --green:#2ecc71;
+  --green-dark:#27ae60;
+  --red:#e74c3c;
+  --grey-bg:#f4f6f9;
+  --white:#ffffff;
+  --text:#2c3e50;
+  --text-light:#7f8c8d;
+  --border:#e1e6ea;
+  --radius:10px;
+  --shadow:0 2px 10px rgba(0,0,0,.07);
+  --shadow-lg:0 10px 40px rgba(0,0,0,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Segoe UI', Tahoma, Arial, sans-serif;
+  background:var(--grey-bg);
+  color:var(--text);
+  min-height:100vh;
+  padding-top:64px;
+  transition:background .2s;
+}
+[dir="rtl"] body{font-family:'Segoe UI','Cairo',Tahoma,Arial,sans-serif;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;font-family:inherit;}
+.hidden{display:none !important;}
+img{max-width:100%;}
+
+/* ---------- NAVBAR ---------- */
+.navbar{
+  position:fixed;top:0;left:0;right:0;height:64px;
+  background:var(--white);
+  box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;z-index:1000;
+}
+.navbar-left{display:flex;align-items:center;gap:14px;}
+.menu-container{position:relative;}
+.dots-btn{
+  background:var(--grey-bg);border:none;border-radius:8px;
+  width:40px;height:40px;font-size:20px;color:var(--text);
+  display:flex;align-items:center;justify-content:center;
+}
+.dots-btn:hover{background:var(--border);}
+.dropdown-menu{
+  position:fixed;              /* بدل absolute: نتجنب أي قصّ ناتج عن أصل مُقيَّد، ونتموضع بدقة عبر JS */
+  background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-lg);
+  min-width:220px;max-width:calc(100vw - 20px);
+  overflow:hidden;z-index:1200;
+  display:none;
+  visibility:hidden; /* تُقاس أبعادها دون أن تُرى قبل ضبط موضعها النهائي (لمنع الوميض) */
+}
+.dropdown-menu.show{display:block;}
+.dropdown-menu.positioned{visibility:visible;}
+.dropdown-menu a, .dropdown-menu button{
+  display:block;width:100%;text-align:start;padding:12px 16px;
+  background:none;border:none;font-size:14px;color:var(--text);
+  border-bottom:1px solid var(--border);
+}
+.dropdown-menu a:last-child, .dropdown-menu button:last-child{border-bottom:none;}
+.dropdown-menu a:hover, .dropdown-menu button:hover{background:var(--grey-bg);}
+.brand-title{font-weight:700;font-size:17px;color:var(--blue-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40vw;}
+.navbar-right{display:flex;align-items:center;gap:10px;}
+.lang-switch{
+  background:var(--grey-bg);border:1px solid var(--border);border-radius:20px;
+  padding:8px 16px;font-size:13px;font-weight:600;color:var(--blue-dark);
+}
+.lang-switch:hover{background:var(--border);}
+.btn{
+  border:none;border-radius:8px;padding:9px 18px;font-size:14px;font-weight:600;
+  transition:.15s;
+}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:var(--blue-dark);}
+.btn-success{background:var(--green);color:#fff;}
+.btn-success:hover{background:var(--green-dark);}
+.btn-outline{background:transparent;border:1.5px solid var(--blue);color:var(--blue);}
+.btn-outline:hover{background:var(--blue);color:#fff;}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-sm{padding:6px 12px;font-size:12.5px;}
+.btn-block{width:100%;}
+.btn:disabled{opacity:.55;cursor:not-allowed;}
+
+/* ---------- LAYOUT / WELCOME ---------- */
+.container{max-width:1100px;margin:0 auto;padding:26px 18px;}
+.welcome-hero{
+  text-align:center;padding:70px 20px;
+}
+.welcome-hero h1{font-size:30px;color:var(--blue-dark);margin-bottom:10px;}
+.welcome-hero p{color:var(--text-light);font-size:15px;max-width:520px;margin:0 auto 28px;}
+.title-input-wrap{max-width:420px;margin:0 auto 30px;}
+.title-input-wrap input{
+  width:100%;padding:12px 14px;border-radius:var(--radius);border:1.5px solid var(--border);
+  font-size:14px;text-align:center;
+}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+
+/* ---------- CARDS / PORTAL ---------- */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:20px;}
+.section-title{font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text);display:flex;align-items:center;gap:8px;}
+.intro-card p{line-height:1.9;color:var(--text-light);}
+.specialty-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-top:16px;}
+.specialty-btn{
+  background:var(--white);border:2px solid var(--blue);color:var(--blue-dark);
+  border-radius:var(--radius);padding:18px 12px;font-size:15px;font-weight:700;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.specialty-btn:hover{background:var(--blue);color:#fff;transform:translateY(-2px);}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:14px;}
+.gallery-grid img{width:100%;height:130px;object-fit:cover;border-radius:8px;box-shadow:var(--shadow);}
+
+/* ---------- MODALS ---------- */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);
+  display:none;align-items:center;justify-content:center;z-index:2000;
+  padding:16px;animation:fadeIn .2s ease;
+}
+.overlay.show{display:flex;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{
+  background:var(--white);border-radius:var(--radius);
+  width:100%;max-width:460px;max-height:88vh;overflow-y:auto;
+  box-shadow:var(--shadow-lg);position:relative;padding:26px;
+  animation:slideUp .25s ease;
+}
+.modal.modal-wide{max-width:720px;}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;}
+.modal-header h2{font-size:19px;color:var(--blue-dark);}
+.modal-header-btns{display:flex;gap:8px;}
+.icon-btn{
+  background:var(--grey-bg);border:none;border-radius:8px;width:34px;height:34px;
+  font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text);
+}
+.icon-btn:hover{background:var(--border);}
+.icon-btn.close-btn:hover{background:var(--red);color:#fff;}
+
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:13.5px;font-weight:600;margin-bottom:6px;color:var(--text);}
+.form-group input, .form-group select, .form-group textarea{
+  width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;
+  font-size:14px;background:var(--white);color:var(--text);
+}
+.form-group select[multiple]{height:120px;}
+.form-group textarea{resize:vertical;min-height:90px;}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus{outline:none;border-color:var(--blue);}
+.password-wrap{position:relative;}
+.password-wrap input{padding-inline-end:40px;}
+.toggle-eye{
+  position:absolute;top:50%;transform:translateY(-50%);inset-inline-end:10px;
+  background:none;border:none;font-size:16px;
+}
+.field-error{color:var(--red);font-size:12.5px;margin-top:5px;display:none;}
+.field-error.show{display:block;}
+.radio-row{display:flex;gap:20px;margin-bottom:16px;}
+.radio-row label{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;cursor:pointer;}
+.form-footer-link{text-align:center;font-size:13px;margin-top:14px;color:var(--text-light);}
+.form-footer-link a{color:var(--blue);font-weight:600;}
+.small-note{font-size:12px;color:var(--text-light);margin-top:4px;}
+.alert-box{padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none;}
+.alert-box.show{display:block;}
+.alert-error{background:#fdecea;color:#c0392b;border:1px solid #f5c6c1;}
+.alert-success{background:#eafaf1;color:#1e8449;border:1px solid #b7ecc9;}
+.alert-info{background:#eaf3fb;color:#21618c;border:1px solid #bfe0f5;}
+
+/* dynamic add lists (admin: add specialty/subject) */
+.dyn-list{margin-bottom:8px;}
+.dyn-row{display:flex;gap:8px;margin-bottom:8px;}
+.dyn-row input{flex:1;}
+.dyn-row button{flex-shrink:0;}
+.chip-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.chip{background:var(--grey-bg);border-radius:20px;padding:6px 12px;font-size:12.5px;display:flex;align-items:center;gap:6px;}
+.chip button{background:none;border:none;color:var(--red);font-weight:700;}
+
+/* ---------- DASHBOARD LAYOUT ---------- */
+.dash-wrap{display:flex;min-height:calc(100vh - 64px);}
+.sidebar{
+  width:230px;background:var(--white);box-shadow:var(--shadow);
+  padding:20px 0;flex-shrink:0;
+}
+.sidebar-item{
+  display:flex;align-items:center;gap:10px;padding:13px 22px;font-size:14.5px;font-weight:600;
+  color:var(--text-light);border-inline-start:3px solid transparent;position:relative;
+}
+.sidebar-item:hover{background:var(--grey-bg);}
+.sidebar-item.active{color:var(--blue-dark);border-inline-start-color:var(--blue);background:var(--grey-bg);}
+.badge{
+  background:var(--red);color:#fff;font-size:10.5px;font-weight:700;border-radius:10px;
+  padding:1px 6px;min-width:16px;text-align:center;
+}
+.dash-main{flex:1;padding:26px;min-width:0;}
+.tabs-row{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.tab-btn{
+  background:var(--white);border:1.5px solid var(--border);border-radius:20px;
+  padding:8px 18px;font-size:13.5px;font-weight:600;color:var(--text-light);
+}
+.tab-btn.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.content-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:14px;}
+.content-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;}
+.type-pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;color:#fff;white-space:nowrap;}
+.type-lesson{background:var(--blue);}
+.type-solved{background:var(--green);}
+.type-unsolved{background:#e67e22;}
+.deadline-note{font-size:12px;color:var(--red);font-weight:700;margin-top:8px;}
+.empty-state{text-align:center;padding:50px 10px;color:var(--text-light);}
+.empty-state .big-icon{font-size:40px;margin-bottom:12px;}
+
+/* Messages */
+.msg-tabs{display:flex;gap:10px;margin-bottom:14px;}
+.chat-layout{display:flex;gap:16px;height:60vh;min-height:400px;}
+.chat-list{width:230px;flex-shrink:0;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow-y:auto;}
+.chat-list-item{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:600;}
+.chat-list-item:hover, .chat-list-item.active{background:var(--grey-bg);}
+.chat-panel{flex:1;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
+.bubble{max-width:70%;padding:9px 13px;border-radius:14px;font-size:13.5px;line-height:1.5;}
+.bubble.me{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:4px;}
+[dir="rtl"] .bubble.me{border-bottom-right-radius:14px;border-bottom-left-radius:4px;}
+.bubble.them{align-self:flex-start;background:var(--grey-bg);color:var(--text);border-bottom-left-radius:4px;}
+[dir="rtl"] .bubble.them{border-bottom-left-radius:14px;border-bottom-right-radius:4px;}
+.bubble.readonly{align-self:center;background:#fff3cd;color:#7a5c00;max-width:90%;}
+.chat-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);}
+.chat-input-row input{flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:20px;}
+
+/* notifications */
+.notif-item{display:flex;gap:10px;padding:13px;border-radius:8px;margin-bottom:8px;background:var(--grey-bg);}
+.notif-item.unread{background:#eaf3fb;border-inline-start:3px solid var(--blue);}
+.notif-icon{font-size:18px;}
+
+/* settings toggle */
+.switch{position:relative;display:inline-block;width:46px;height:25px;}
+.switch input{opacity:0;width:0;height:0;}
+.slider-toggle{position:absolute;cursor:pointer;inset:0;background:#ccc;border-radius:25px;transition:.2s;}
+.slider-toggle:before{content:"";position:absolute;height:19px;width:19px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+input:checked + .slider-toggle{background:var(--green);}
+input:checked + .slider-toggle:before{transform:translateX(21px);}
+[dir="rtl"] input:checked + .slider-toggle:before{transform:translateX(-21px);}
+.settings-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);}
+
+/* upload zone */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;color:var(--text-light);font-size:13px;cursor:pointer;}
+.upload-zone:hover{border-color:var(--blue);color:var(--blue);}
+.preview-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.preview-thumbs img{width:70px;height:70px;object-fit:cover;border-radius:8px;}
+
+.spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-inline-end:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media (max-width:760px){
+  .sidebar{position:fixed;bottom:0;left:0;right:0;top:auto;width:100%;display:flex;padding:6px 0;z-index:900;box-shadow:0 -2px 10px rgba(0,0,0,.08);}
+  .sidebar-item{flex:1;flex-direction:column;font-size:11px;padding:8px 4px;border-inline-start:none;border-top:3px solid transparent;text-align:center;gap:4px;}
+  .sidebar-item.active{border-top-color:var(--blue);}
+  .dash-wrap{padding-bottom:64px;}
+  .chat-layout{flex-direction:column;height:auto;}
+  .chat-list{width:100%;max-height:140px;}
+  .chat-panel{height:50vh;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================= NAVBAR ============================= -->
+<nav class="navbar">
+  <div class="navbar-left">
+    <div class="menu-container" id="menuContainer">
+      <button class="dots-btn" id="dotsBtn">⋮</button>
+      <div class="dropdown-menu" id="dotsMenu">
+        <a href="#" id="menuHome" data-i18n="menu_home">الرئيسية</a>
+        <a href="#" id="menuLogin" data-i18n="menu_login">تسجيل الدخول</a>
+        <a href="#" id="menuRegister" data-i18n="menu_register">إنشاء حساب</a>
+        <a href="#" id="menuDashboard" class="hidden" data-i18n="menu_dashboard">لوحة التحكم</a>
+        <a href="#" id="menuLogout" class="hidden" data-i18n="menu_logout">تسجيل الخروج</a>
+      </div>
+    </div>
+    <span class="brand-title" id="brandTitle" data-i18n="default_title">بوابة المعهد</span>
+  </div>
+  <div class="navbar-right">
+    <button class="lang-switch" id="langSwitchBtn">FR / Français</button>
+  </div>
+</nav>
+
+<!-- ============================= WELCOME (before publish) ============================= -->
+<section id="welcomeScreen" class="container">
+  <div class="welcome-hero">
+    <h1 data-i18n="welcome_title">مرحباً بكم في منصة المعهد</h1>
+    <p data-i18n="welcome_desc">منصة تكوينية متكاملة تربط الطلاب بالأساتذة والإدارة في مكان واحد.</p>
+    <div class="title-input-wrap">
+      <input type="text" id="liveTitleInput" data-i18n-ph="welcome_input_ph" placeholder="اكتب هنا اسم المعهد ليظهر حياً في الأعلى...">
+    </div>
+    <div class="hero-actions">
+      <button class="btn btn-primary" id="btnOpenLogin" data-i18n="btn_login">تسجيل الدخول</button>
+      <button class="btn btn-success" id="btnOpenRegister" data-i18n="btn_register">إنشاء حساب جديد</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================= PORTAL (after admin publishes) ============================= -->
+<section id="portalScreen" class="container hidden">
+  <div class="card intro-card">
+    <div class="section-title"><span id="portalInstituteIcon">🏫</span><span id="portalInstituteName"></span></div>
+    <p id="portalInstituteDesc"></p>
+  </div>
+
+  <div class="card">
+    <div class="section-title" data-i18n="portal_specialties_title">📚 التخصصات المتاحة</div>
+    <div class="specialty-grid" id="portalSpecialtyGrid"></div>
+  </div>
+
+  <div class="card" id="galleryCard">
+    <div class="section-title" data-i18n="gallery_title">📸 المعرض والملفات المرفقة</div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </div>
+</section>
+
+<!-- ============================= SPECIALTY DETAIL MODAL ============================= -->
+<div class="overlay" id="specialtyOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="specialtyModalTitle">-</h2>
+      <div class="modal-header-btns">
+        <button class="icon-btn close-btn" data-close="specialtyOverlay">×</button>
+      </div>
+    </div>
+    <p id="specialtyModalDesc" style="color:var(--text-light);line-height:1.8;"></p>
+  </div>
+</div>
+
+<!-- ============================= LOGIN MODAL ============================= -->
+<div class="overlay" id="loginOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 data-i18n="login_title">تسجيل الدخول</h2>
+      <div class="modal-header-btns">
+        <button class="icon-btn close-btn" data-close="loginOverlay">×</button>
+      </div>
+    </div>
+    <div class="alert-box alert-error" id="loginAlert"></div>
+    <div class="form-group">
+      <label data-i18n="label_username_email">اسم المستخدم أو البريد الإلكتروني</label>
+      <input type="text" id="loginIdentifier" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label data-i18n="label_password">كلمة المرور</label>
+      <div class="password-wrap">
+        <input type="password" id="loginPassword" autocomplete="current-password">
+        <button type="button" class="toggle-eye" data-target="loginPassword">👁️</button>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-block" id="btnDoLogin"><span class="spinner hidden" id="loginSpinner"></span><span data-i18n="btn_login">تسجيل الدخول</span></button>
+    <div class="form-footer-link">
+      <a href="#" id="linkForgotPassword" data-i18n="link_forgot">نسيت كلمة المرور؟</a>
+    </div>
+    <div class="form-footer-link">
+      <span data-i18n="no_account">ليس لديك حساب؟</span> <a href="#" id="linkGoRegister" data-i18n="link_register_now">أنشئ حساباً الآن</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= FORGOT PASSWORD (OTP) MODAL ============================= -->
+<div class="overlay" id="forgotOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 data-i18n="forgot_title">استعادة كلمة المرور</h2>
+      <div class="modal-header-btns">
+        <button class="icon-btn" id="forgotBackBtn" data-back="loginOverlay">↩</button>
+        <button class="icon-btn close-btn" data-close="forgotOverlay">×</button>
+      </div>
+    </div>
+    <div class="alert-box alert-error" id="forgotAlert"></div>
+    <div class="alert-box alert-success" id="forgotSuccess"></div>
+    <div id="forgotStep1">
+      <div class="form-group">
+        <label data-i18n="label_email">البريد الإلكتروني</label>
+        <input type="email" id="forgotEmail">
+      </div>
+      <button class="btn btn-primary btn-block" id="btnSendOtp"><span class="spinner hidden" id="sendOtpSpinner"></span><span data-i18n="btn_send_otp">إرسال رمز التحقق</span></button>
+    </div>
+    <div id="forgotStep2" class="hidden">
+      <p class="small-note" data-i18n="otp_sent_note">تم إرسال رمز مكوّن من 6 أرقام إلى بريدك الإلكتروني.</p>
+      <div class="form-group">
+        <label data-i18n="label_otp">رمز التحقق (OTP)</label>
+        <input type="text" id="otpCode" maxlength="6">
+      </div>
+      <div class="form-group">
+        <label data-i18n="label_new_password">كلمة المرور الجديدة</label>
+        <div class="password-wrap">
+          <input type="password" id="otpNewPassword">
+          <button type="button" class="toggle-eye" data-target="otpNewPassword">👁️</button>
+        </div>
+      </div>
+      <button class="btn btn-success btn-block" id="btnConfirmOtp"><span class="spinner hidden" id="confirmOtpSpinner"></span><span data-i18n="btn_confirm_new_password">تأكيد كلمة المرور الجديدة</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= REGISTER MODAL ============================= -->
+<div class="overlay" id="registerOverlay">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <h2 data-i18n="register_title">إنشاء حساب جديد</h2>
+      <div class="modal-header-btns">
+        <button class="icon-btn close-btn" data-close="registerOverlay">×</button>
+      </div>
+    </div>
+    <div class="alert-box alert-error" id="registerAlert"></div>
+    <div class="alert-box alert-success" id="registerSuccess"></div>
+
+    <div class="radio-row">
+      <label><input type="radio" name="regRole" value="student" checked> <span data-i18n="role_student">طالب</span></label>
+      <label><input type="radio" name="regRole" value="teacher"> <span data-i18n="role_teacher">أستاذ</span></label>
+    </div>
+
+    <div class="form-group"><label data-i18n="label_first_name">الاسم</label><input type="text" id="regFirstName"></div>
+    <div class="form-group"><label data-i18n="label_last_name">اللقب</label><input type="text" id="regLastName"></div>
+
+    <div id="studentFields">
+      <div class="form-group">
+        <label data-i18n="label_specialty">التخصص</label>
+        <select id="regSpecialtyStudent"></select>
+      </div>
+      <div class="form-group">
+        <label data-i18n="label_specialty_code">رمز التخصص</label>
+        <input type="text" id="regSpecialtyCode" placeholder="AB-1234">
+        <div class="field-error" id="specialtyCodeError" data-i18n="err_specialty_code">يجب أن يتكون الرمز من 5 خانات على الأقل: حروف لاتينية كبيرة، أرقام، أو (-) فقط.</div>
+      </div>
+    </div>
+
+    <div id="teacherFields" class="hidden">
+      <div class="form-group">
+        <label data-i18n="label_specialties_multi">التخصصات (يمكن اختيار أكثر من واحد)</label>
+        <select id="regSpecialtyTeacher" multiple></select>
+      </div>
+      <div class="form-group">
+        <label data-i18n="label_subjects_multi">المواد الدراسية (يمكن اختيار أكثر من واحدة)</label>
+        <select id="regSubjectTeacher" multiple></select>
+      </div>
+    </div>
+
+    <div class="form-group"><label data-i18n="label_username_email">اسم المستخدم أو البريد الإلكتروني</label><input type="email" id="regEmail" placeholder="example@mail.com"></div>
+    <div class="form-group">
+      <label data-i18n="label_password">كلمة المرور</label>
+      <div class="password-wrap">
+        <input type="password" id="regPassword">
+        <button type="button" class="toggle-eye" data-target="regPassword">👁️</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label data-i18n="label_confirm_password">تأكيد كلمة المرور</label>
+      <div class="password-wrap">
+        <input type="password" id="regPasswordConfirm">
+        <button type="button" class="toggle-eye" data-target="regPasswordConfirm">👁️</button>
+      </div>
+      <div class="field-error" id="passwordMatchError" data-i18n="err_password_match">كلمتا المرور غير متطابقتين.</div>
+    </div>
+
+    <button class="btn btn-success btn-block" id="btnDoRegister"><span class="spinner hidden" id="registerSpinner"></span><span data-i18n="btn_register">إنشاء الحساب</span></button>
+    <p class="small-note" data-i18n="register_pending_note">سيتم تفعيل حسابك بعد موافقة الإدارة.</p>
+    <div class="form-footer-link">
+      <span data-i18n="have_account">لديك حساب بالفعل؟</span> <a href="#" id="linkGoLogin" data-i18n="link_login_now">سجّل الدخول</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= ADMIN FIRST LOGIN (forced) ============================= -->
+<div class="overlay" id="adminFirstLoginOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 data-i18n="admin_first_login_title">تأمين حساب الإدارة</h2>
+    </div>
+    <div class="alert-box alert-error" id="adminFirstAlert"></div>
+    <p class="small-note" style="margin-bottom:14px;" data-i18n="admin_first_login_note">لأسباب أمنية، يرجى إدخال بريدك الإلكتروني وتغيير كلمة المرور الافتراضية قبل المتابعة.</p>
+    <div class="form-group"><label data-i18n="label_email">البريد الإلكتروني</label><input type="email" id="adminFirstEmail"></div>
+    <div class="form-group">
+      <label data-i18n="label_new_password">كلمة المرور الجديدة</label>
+      <div class="password-wrap">
+        <input type="password" id="adminFirstPassword">
+        <button type="button" class="toggle-eye" data-target="adminFirstPassword">👁️</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label data-i18n="label_confirm_password">تأكيد كلمة المرور</label>
+      <div class="password-wrap">
+        <input type="password" id="adminFirstPasswordConfirm">
+        <button type="button" class="toggle-eye" data-target="adminFirstPasswordConfirm">👁️</button>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-block" id="btnAdminFirstSave"><span class="spinner hidden" id="adminFirstSpinner"></span><span data-i18n="btn_save_continue">حفظ ومتابعة</span></button>
+  </div>
+</div>
+
+<!-- ============================= ADMIN SETUP MODAL ============================= -->
+<div class="overlay" id="adminSetupOverlay">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <h2 data-i18n="admin_setup_title">إعداد بيانات المعهد</h2>
+      <div class="modal-header-btns">
+        <button class="icon-btn close-btn" data-close="adminSetupOverlay">×</button>
+      </div>
+    </div>
+    <div class="alert-box alert-error" id="adminSetupAlert"></div>
+    <div class="form-group"><label data-i18n="label_institute_name">اسم المعهد</label><input type="text" id="setupInstituteName"></div>
+    <div class="form-group"><label data-i18n="label_institute_desc">التعريف بالمعهد</label><textarea id="setupInstituteDesc"></textarea></div>
+
+    <div class="form-group">
+      <label data-i18n="label_add_specialty">إضافة تخصص جديد</label>
+      <div class="dyn-row">
+        <input type="text" id="newSpecialtyInput" data-i18n-ph="ph_specialty_name" placeholder="اسم التخصص">
+        <button class="btn btn-outline btn-sm" id="btnAddSpecialty" data-i18n="btn_add">إضافة</button>
+      </div>
+      <div class="chip-list" id="specialtyChipList"></div>
+    </div>
+
+    <div class="form-group">
+      <label data-i18n="label_add_subject">إضافة مادة جديدة</label>
+      <div class="dyn-row">
+        <input type="text" id="newSubjectInput" data-i18n-ph="ph_subject_name" placeholder="اسم المادة">
+        <button class="btn btn-outline btn-sm" id="btnAddSubject" data-i18n="btn_add">إضافة</button>
+      </div>
+      <div class="chip-list" id="subjectChipList"></div>
+    </div>
+
+    <div class="form-group">
+      <label data-i18n="label_gallery_upload">رفع صور/ملفات (اختياري)</label>
+      <div class="upload-zone" id="uploadZone" data-i18n="upload_zone_text">اضغط هنا لاختيار الملفات أو اسحبها هنا</div>
+      <input type="file" id="galleryFileInput" multiple accept="image/*" class="hidden">
+      <div class="preview-thumbs" id="galleryPreview"></div>
+    </div>
+
+    <button class="btn btn-success btn-block" id="btnPublishSetup"><span class="spinner hidden" id="publishSpinner"></span><span data-i18n="btn_publish">نشر وتحديث البيانات</span></button>
+  </div>
+</div>
+
+<!-- ============================= CONTENT PUBLISH MODAL (Teacher) ============================= -->
+<div class="overlay" id="publishContentOverlay">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <h2 data-i18n="publish_content_title">نشر محتوى جديد</h2>
+      <div class="modal-header-btns"><button class="icon-btn close-btn" data-close="publishContentOverlay">×</button></div>
+    </div>
+    <div class="alert-box alert-error" id="publishContentAlert"></div>
+    <div class="form-group"><label data-i18n="label_specialty">التخصص</label><select id="pubSpecialty"></select></div>
+    <div class="form-group"><label data-i18n="label_subject">المادة</label><select id="pubSubject"></select></div>
+    <div class="form-group">
+      <label data-i18n="label_content_type">نوع المحتوى</label>
+      <select id="pubType">
+        <option value="lesson" data-i18n="type_lesson">درس</option>
+        <option value="solved" data-i18n="type_solved">تمرين محلول</option>
+        <option value="unsolved" data-i18n="type_unsolved">تمرين للحل</option>
+      </select>
+    </div>
+    <div class="form-group hidden" id="pubDeadlineGroup">
+      <label data-i18n="label_deadline">الموعد النهائي للتسليم</label>
+      <input type="datetime-local" id="pubDeadline">
+    </div>
+    <div class="form-group"><label data-i18n="label_title">العنوان</label><input type="text" id="pubTitle"></div>
+    <div class="form-group"><label data-i18n="label_body_text">نص المحتوى (اختياري)</label><textarea id="pubBody"></textarea></div>
+    <div class="form-group">
+      <label data-i18n="label_attach_file">إرفاق ملف (اختياري)</label>
+      <div class="upload-zone" id="pubUploadZone" data-i18n="upload_zone_text">اضغط هنا لاختيار الملفات أو اسحبها هنا</div>
+      <input type="file" id="pubFileInput" class="hidden">
+      <div class="small-note" id="pubFileName"></div>
+    </div>
+    <button class="btn btn-success btn-block" id="btnDoPublish"><span class="spinner hidden" id="publishContentSpinner"></span><span data-i18n="btn_publish">نشر</span></button>
+  </div>
+</div>
+
+<!-- ============================= STUDENT DASHBOARD ============================= -->
+<div class="dash-wrap hidden" id="studentDash">
+  <aside class="sidebar">
+    <div class="sidebar-item active" data-tab="home" data-dash="student"><span>🏠</span><span data-i18n="side_home">الرئيسية</span></div>
+    <div class="sidebar-item" data-tab="notifications" data-dash="student"><span>🔔</span><span data-i18n="side_notifications">الإشعارات</span><span class="badge hidden" id="studentNotifBadge">0</span></div>
+    <div class="sidebar-item" data-tab="messages" data-dash="student"><span>💬</span><span data-i18n="side_messages">الرسائل</span><span class="badge hidden" id="studentMsgBadge">0</span></div>
+    <div class="sidebar-item" data-tab="settings" data-dash="student"><span>⚙️</span><span data-i18n="side_settings">الإعدادات</span></div>
+  </aside>
+  <main class="dash-main">
+    <div class="dash-tab" id="student-home">
+      <div class="tabs-row" id="studentContentTabs">
+        <button class="tab-btn active" data-filter="all" data-i18n="tab_all">الكل</button>
+        <button class="tab-btn" data-filter="lesson" data-i18n="tab_lessons">الدروس</button>
+        <button class="tab-btn" data-filter="solved" data-i18n="tab_solved">تمارين محلولة</button>
+        <button class="tab-btn" data-filter="unsolved" data-i18n="tab_unsolved">تمارين للحل</button>
+      </div>
+      <div id="studentContentList"></div>
+    </div>
+    <div class="dash-tab hidden" id="student-notifications">
+      <div class="section-title" data-i18n="side_notifications">الإشعارات</div>
+      <div id="studentNotifList"></div>
+    </div>
+    <div class="dash-tab hidden" id="student-messages">
+      <div class="msg-tabs">
+        <button class="tab-btn active" data-msgview="teachers" data-i18n="msg_tab_teachers">محادثات الأساتذة</button>
+        <button class="tab-btn" data-msgview="admin" data-i18n="msg_tab_admin">رسائل الإدارة</button>
+      </div>
+      <div class="chat-layout">
+        <div class="chat-list" id="studentChatList"></div>
+        <div class="chat-panel">
+          <div class="chat-messages" id="studentChatMessages"></div>
+          <div class="chat-input-row" id="studentChatInputRow">
+            <input type="text" id="studentChatInput" data-i18n-ph="ph_type_message" placeholder="اكتب رسالتك...">
+            <button class="btn btn-primary" id="studentChatSend" data-i18n="btn_send">إرسال</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-tab hidden" id="student-settings">
+      <div class="card">
+        <div class="section-title" data-i18n="settings_password_title">🔒 تغيير كلمة المرور</div>
+        <div class="alert-box alert-error" id="studentPwAlert"></div>
+        <div class="alert-box alert-success" id="studentPwSuccess"></div>
+        <div id="studentPwStep1">
+          <button class="btn btn-outline" id="studentSendOtpBtn" data-i18n="btn_send_otp">إرسال رمز التحقق</button>
+        </div>
+        <div id="studentPwStep2" class="hidden" style="margin-top:14px;">
+          <div class="form-group"><label data-i18n="label_otp">رمز التحقق (OTP)</label><input type="text" id="studentOtpInput" maxlength="6"></div>
+          <div class="form-group">
+            <label data-i18n="label_new_password">كلمة المرور الجديدة</label>
+            <div class="password-wrap"><input type="password" id="studentNewPwInput"><button type="button" class="toggle-eye" data-target="studentNewPwInput">👁️</button></div>
+          </div>
+          <button class="btn btn-success" id="studentConfirmPwBtn" data-i18n="btn_confirm_new_password">تأكيد</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="settings-row">
+          <span data-i18n="settings_notif_toggle">تفعيل الإشعارات</span>
+          <label class="switch"><input type="checkbox" id="studentNotifToggle" checked><span class="slider-toggle"></span></label>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============================= TEACHER DASHBOARD ============================= -->
+<div class="dash-wrap hidden" id="teacherDash">
+  <aside class="sidebar">
+    <div class="sidebar-item active" data-tab="home" data-dash="teacher"><span>🏠</span><span data-i18n="side_home_content">الرئيسية وإدارة المحتوى</span></div>
+    <div class="sidebar-item" data-tab="notifications" data-dash="teacher"><span>🔔</span><span data-i18n="side_notifications">الإشعارات</span><span class="badge hidden" id="teacherNotifBadge">0</span></div>
+    <div class="sidebar-item" data-tab="messages" data-dash="teacher"><span>💬</span><span data-i18n="side_messages">الرسائل</span><span class="badge hidden" id="teacherMsgBadge">0</span></div>
+    <div class="sidebar-item" data-tab="settings" data-dash="teacher"><span>⚙️</span><span data-i18n="side_settings">الإعدادات</span></div>
+  </aside>
+  <main class="dash-main">
+    <div class="dash-tab" id="teacher-home">
+      <button class="btn btn-success" id="btnOpenPublish" style="margin-bottom:16px;" data-i18n="btn_publish_content">نشر محتوى</button>
+      <div id="teacherContentList"></div>
+    </div>
+    <div class="dash-tab hidden" id="teacher-notifications">
+      <div class="section-title" data-i18n="side_notifications">الإشعارات</div>
+      <div id="teacherNotifList"></div>
+    </div>
+    <div class="dash-tab hidden" id="teacher-messages">
+      <div class="msg-tabs">
+        <button class="tab-btn active" data-msgview="students" data-i18n="msg_tab_students">الطلاب</button>
+        <button class="tab-btn" data-msgview="admin" data-i18n="msg_tab_admin_chat">الإدارة</button>
+      </div>
+      <div class="chat-layout">
+        <div class="chat-list" id="teacherChatList"></div>
+        <div class="chat-panel">
+          <div class="chat-messages" id="teacherChatMessages"></div>
+          <div class="chat-input-row">
+            <input type="text" id="teacherChatInput" data-i18n-ph="ph_type_message" placeholder="اكتب رسالتك...">
+            <button class="btn btn-primary" id="teacherChatSend" data-i18n="btn_send">إرسال</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-tab hidden" id="teacher-settings">
+      <div class="card">
+        <div class="section-title" data-i18n="settings_password_title">🔒 تغيير كلمة المرور</div>
+        <div class="alert-box alert-error" id="teacherPwAlert"></div>
+        <div class="alert-box alert-success" id="teacherPwSuccess"></div>
+        <div id="teacherPwStep1"><button class="btn btn-outline" id="teacherSendOtpBtn" data-i18n="btn_send_otp">إرسال رمز التحقق</button></div>
+        <div id="teacherPwStep2" class="hidden" style="margin-top:14px;">
+          <div class="form-group"><label data-i18n="label_otp">رمز التحقق (OTP)</label><input type="text" id="teacherOtpInput" maxlength="6"></div>
+          <div class="form-group"><label data-i18n="label_new_password">كلمة المرور الجديدة</label>
+            <div class="password-wrap"><input type="password" id="teacherNewPwInput"><button type="button" class="toggle-eye" data-target="teacherNewPwInput">👁️</button></div>
+          </div>
+          <button class="btn btn-success" id="teacherConfirmPwBtn" data-i18n="btn_confirm_new_password">تأكيد</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="settings-row"><span data-i18n="settings_notif_toggle">تفعيل الإشعارات</span>
+          <label class="switch"><input type="checkbox" id="teacherNotifToggle" checked><span class="slider-toggle"></span></label>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ============================= ADMIN DASHBOARD ============================= -->
+<div class="dash-wrap hidden" id="adminDash">
+  <aside class="sidebar">
+    <div class="sidebar-item active" data-tab="edit" data-dash="admin"><span>🛠️</span><span data-i18n="side_edit_platform">تعديل بيانات المنصة</span></div>
+    <div class="sidebar-item" data-tab="messages" data-dash="admin"><span>💬</span><span data-i18n="side_messages">الرسائل</span><span class="badge hidden" id="adminMsgBadge">0</span></div>
+    <div class="sidebar-item" data-tab="requests" data-dash="admin"><span>📝</span><span data-i18n="side_requests">طلبات التسجيل</span><span class="badge hidden" id="adminReqBadge">0</span></div>
+    <div class="sidebar-item" data-tab="settings" data-dash="admin"><span>⚙️</span><span data-i18n="side_settings">الإعدادات</span></div>
+  </aside>
+  <main class="dash-main">
+    <div class="dash-tab" id="admin-edit">
+      <button class="btn btn-primary" id="btnEditPlatform" data-i18n="btn_edit_platform_data">تعديل بيانات المعهد الآن</button>
+    </div>
+    <div class="dash-tab hidden" id="admin-messages">
+      <div class="msg-tabs">
+        <button class="tab-btn active" data-msgview="teachers" data-i18n="msg_tab_teachers_chat">الأساتذة</button>
+        <button class="tab-btn" data-msgview="broadcast" data-i18n="msg_tab_broadcast">إرسال شهادات ونقاط (تعميم)</button>
+      </div>
+      <div id="adminMsgTeachersView" class="chat-layout">
+        <div class="chat-list" id="adminChatList"></div>
+        <div class="chat-panel">
+          <div class="chat-messages" id="adminChatMessages"></div>
+          <div class="chat-input-row">
+            <input type="text" id="adminChatInput" data-i18n-ph="ph_type_message" placeholder="اكتب رسالتك...">
+            <button class="btn btn-primary" id="adminChatSend" data-i18n="btn_send">إرسال</button>
+          </div>
+        </div>
+      </div>
+      <div id="adminBroadcastView" class="hidden card">
+        <div class="form-group">
+          <label data-i18n="label_broadcast_message">نص التعميم (شهادات/نقاط/إعلان)</label>
+          <textarea id="broadcastText"></textarea>
+        </div>
+        <button class="btn btn-success" id="btnSendBroadcast" data-i18n="btn_send_broadcast">إرسال للجميع</button>
+      </div>
+    </div>
+    <div class="dash-tab hidden" id="admin-requests">
+      <div class="section-title" data-i18n="side_requests">طلبات التسجيل</div>
+      <div id="adminRequestsList"></div>
+    </div>
+    <div class="dash-tab hidden" id="admin-settings">
+      <div class="card">
+        <div class="section-title" data-i18n="settings_password_title">🔒 تغيير كلمة المرور</div>
+        <div class="alert-box alert-error" id="adminPwAlert"></div>
+        <div class="alert-box alert-success" id="adminPwSuccess"></div>
+        <div id="adminPwStep1"><button class="btn btn-outline" id="adminSendOtpBtn" data-i18n="btn_send_otp">إرسال رمز التحقق</button></div>
+        <div id="adminPwStep2" class="hidden" style="margin-top:14px;">
+          <div class="form-group"><label data-i18n="label_otp">رمز التحقق (OTP)</label><input type="text" id="adminOtpInput" maxlength="6"></div>
+          <div class="form-group"><label data-i18n="label_new_password">كلمة المرور الجديدة</label>
+            <div class="password-wrap"><input type="password" id="adminNewPwInput"><button type="button" class="toggle-eye" data-target="adminNewPwInput">👁️</button></div>
+          </div>
+          <button class="btn btn-success" id="adminConfirmPwBtn" data-i18n="btn_confirm_new_password">تأكيد</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* =========================================================================
+   منصة المعهد - المنطق البرمجي الكامل
+   ========================================================================= */
+
+// -------------------- 1) إعدادات الربط بـ Supabase --------------------
+const SUPABASE_URL = "https://fyuwwzqkbtrmvonwsosh.supabase.co";      // TODO: ضع رابط مشروعك
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5dXd3enFrYnRybXZvbndzb3NoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMzgzMjksImV4cCI6MjA5ODcxNDMyOX0.kYfJlYjfUG2h7NjatbWEtczmgt1fagu18yZghqoiGBA";                // TODO: ضع المفتاح العام (anon key)
+const STORAGE_BUCKET = "institute-assets";
+const ADMIN_DEFAULT_USERNAME = "admin";
+const ADMIN_DEFAULT_PASSWORD = "Admin123#";
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// -------------------- 2) الترجمة (i18n) --------------------
+const I18N = {
+ar: {
+  default_title: "بوابة المعهد",
+  menu_home: "الرئيسية", menu_login: "تسجيل الدخول", menu_register: "إنشاء حساب",
+  menu_dashboard: "لوحة التحكم", menu_logout: "تسجيل الخروج",
+  welcome_title: "مرحباً بكم في منصة المعهد",
+  welcome_desc: "منصة تكوينية متكاملة تربط الطلاب بالأساتذة والإدارة في مكان واحد.",
+  welcome_input_ph: "اكتب هنا اسم المعهد ليظهر حياً في الأعلى...",
+  btn_login: "تسجيل الدخول", btn_register: "إنشاء حساب جديد",
+  portal_specialties_title: "📚 التخصصات المتاحة",
+  gallery_title: "📸 المعرض والملفات المرفقة",
+  login_title: "تسجيل الدخول",
+  label_username_email: "اسم المستخدم أو البريد الإلكتروني",
+  label_password: "كلمة المرور",
+  link_forgot: "نسيت كلمة المرور؟", no_account: "ليس لديك حساب؟", link_register_now: "أنشئ حساباً الآن",
+  forgot_title: "استعادة كلمة المرور",
+  label_email: "البريد الإلكتروني", btn_send_otp: "إرسال رمز التحقق",
+  otp_sent_note: "تم إرسال رمز مكوّن من 6 أرقام إلى بريدك الإلكتروني.",
+  label_otp: "رمز التحقق (OTP)", label_new_password: "كلمة المرور الجديدة",
+  btn_confirm_new_password: "تأكيد كلمة المرور الجديدة",
+  register_title: "إنشاء حساب جديد", role_student: "طالب", role_teacher: "أستاذ",
+  label_first_name: "الاسم", label_last_name: "اللقب",
+  label_specialty: "التخصص", label_specialty_code: "رمز التخصص",
+  err_specialty_code: "يجب أن يتكون الرمز من 5 خانات على الأقل: حروف لاتينية كبيرة، أرقام، أو (-) فقط.",
+  label_specialties_multi: "التخصصات (يمكن اختيار أكثر من واحد)",
+  label_subjects_multi: "المواد الدراسية (يمكن اختيار أكثر من واحدة)",
+  label_confirm_password: "تأكيد كلمة المرور",
+  err_password_match: "كلمتا المرور غير متطابقتين.",
+  register_pending_note: "سيتم تفعيل حسابك بعد موافقة الإدارة.",
+  have_account: "لديك حساب بالفعل؟", link_login_now: "سجّل الدخول",
+  admin_first_login_title: "تأمين حساب الإدارة",
+  admin_first_login_note: "لأسباب أمنية، يرجى إدخال بريدك الإلكتروني وتغيير كلمة المرور الافتراضية قبل المتابعة.",
+  btn_save_continue: "حفظ ومتابعة",
+  admin_setup_title: "إعداد بيانات المعهد",
+  label_institute_name: "اسم المعهد", label_institute_desc: "التعريف بالمعهد",
+  label_add_specialty: "إضافة تخصص جديد", ph_specialty_name: "اسم التخصص", btn_add: "إضافة",
+  label_add_subject: "إضافة مادة جديدة", ph_subject_name: "اسم المادة",
+  label_gallery_upload: "رفع صور/ملفات (اختياري)", upload_zone_text: "اضغط هنا لاختيار الملفات أو اسحبها هنا",
+  btn_publish: "نشر وتحديث البيانات",
+  publish_content_title: "نشر محتوى جديد", label_subject: "المادة",
+  label_content_type: "نوع المحتوى", type_lesson: "درس", type_solved: "تمرين محلول", type_unsolved: "تمرين للحل",
+  label_deadline: "الموعد النهائي للتسليم", label_title: "العنوان", label_body_text: "نص المحتوى (اختياري)",
+  label_attach_file: "إرفاق ملف (اختياري)",
+  side_home: "الرئيسية", side_home_content: "الرئيسية وإدارة المحتوى",
+  side_notifications: "الإشعارات", side_messages: "الرسائل", side_settings: "الإعدادات",
+  tab_all: "الكل", tab_lessons: "الدروس", tab_solved: "تمارين محلولة", tab_unsolved: "تمارين للحل",
+  msg_tab_teachers: "محادثات الأساتذة", msg_tab_admin: "رسائل الإدارة",
+  ph_type_message: "اكتب رسالتك...", btn_send: "إرسال",
+  settings_password_title: "🔒 تغيير كلمة المرور", settings_notif_toggle: "تفعيل الإشعارات",
+  btn_publish_content: "نشر محتوى", msg_tab_students: "الطلاب", msg_tab_admin_chat: "الإدارة",
+  side_edit_platform: "تعديل بيانات المنصة", side_requests: "طلبات التسجيل",
+  btn_edit_platform_data: "تعديل بيانات المعهد الآن",
+  msg_tab_teachers_chat: "الأساتذة", msg_tab_broadcast: "إرسال شهادات ونقاط (تعميم)",
+  label_broadcast_message: "نص التعميم (شهادات/نقاط/إعلان)", btn_send_broadcast: "إرسال للجميع",
+  no_content_yet: "لا يوجد محتوى حالياً.", no_notifications: "لا توجد إشعارات حالياً.",
+  no_requests: "لا توجد طلبات تسجيل حالياً.", select_conversation: "اختر محادثة من القائمة للبدء.",
+  btn_approve: "قبول", btn_reject: "رفض",
+  err_generic: "حدث خطأ، يرجى المحاولة مرة أخرى.", err_fill_fields: "يرجى ملء جميع الحقول المطلوبة.",
+  err_wrong_credentials: "اسم المستخدم أو كلمة المرور غير صحيحة.",
+  err_pending_account: "حسابك بانتظار موافقة الإدارة.",
+  success_registered: "تم إرسال طلب التسجيل بنجاح، بانتظار موافقة الإدارة.",
+  success_otp_sent: "تم إرسال رمز التحقق إلى بريدك الإلكتروني.",
+  success_password_changed: "تم تغيير كلمة المرور بنجاح.",
+  success_published: "تم النشر بنجاح.",
+  deadline_label: "آخر أجل للتسليم:",
+  admin_pending_credentials_note: "أدخل admin ككلمة مستخدم و Admin123# ككلمة مرور لأول تسجيل دخول.",
+},
+fr: {
+  default_title: "Portail de l'Institut",
+  menu_home: "Accueil", menu_login: "Connexion", menu_register: "Créer un compte",
+  menu_dashboard: "Tableau de bord", menu_logout: "Déconnexion",
+  welcome_title: "Bienvenue sur la plateforme de l'Institut",
+  welcome_desc: "Une plateforme de formation complète reliant étudiants, enseignants et administration en un seul endroit.",
+  welcome_input_ph: "Écrivez ici le nom de l'institut pour l'afficher en direct en haut...",
+  btn_login: "Connexion", btn_register: "Créer un nouveau compte",
+  portal_specialties_title: "📚 Spécialités disponibles",
+  gallery_title: "📸 Galerie et fichiers joints",
+  login_title: "Connexion",
+  label_username_email: "Nom d'utilisateur ou e-mail",
+  label_password: "Mot de passe",
+  link_forgot: "Mot de passe oublié ?", no_account: "Vous n'avez pas de compte ?", link_register_now: "Créez-en un maintenant",
+  forgot_title: "Récupération du mot de passe",
+  label_email: "E-mail", btn_send_otp: "Envoyer le code de vérification",
+  otp_sent_note: "Un code à 6 chiffres a été envoyé à votre e-mail.",
+  label_otp: "Code de vérification (OTP)", label_new_password: "Nouveau mot de passe",
+  btn_confirm_new_password: "Confirmer le nouveau mot de passe",
+  register_title: "Créer un nouveau compte", role_student: "Étudiant", role_teacher: "Enseignant",
+  label_first_name: "Prénom", label_last_name: "Nom",
+  label_specialty: "Spécialité", label_specialty_code: "Code de spécialité",
+  err_specialty_code: "Le code doit contenir au moins 5 caractères : lettres latines majuscules, chiffres, ou (-) uniquement.",
+  label_specialties_multi: "Spécialités (sélection multiple possible)",
+  label_subjects_multi: "Matières (sélection multiple possible)",
+  label_confirm_password: "Confirmer le mot de passe",
+  err_password_match: "Les mots de passe ne correspondent pas.",
+  register_pending_note: "Votre compte sera activé après l'approbation de l'administration.",
+  have_account: "Vous avez déjà un compte ?", link_login_now: "Connectez-vous",
+  admin_first_login_title: "Sécuriser le compte administrateur",
+  admin_first_login_note: "Pour des raisons de sécurité, veuillez saisir votre e-mail et changer le mot de passe par défaut avant de continuer.",
+  btn_save_continue: "Enregistrer et continuer",
+  admin_setup_title: "Configuration des données de l'institut",
+  label_institute_name: "Nom de l'institut", label_institute_desc: "Présentation de l'institut",
+  label_add_specialty: "Ajouter une nouvelle spécialité", ph_specialty_name: "Nom de la spécialité", btn_add: "Ajouter",
+  label_add_subject: "Ajouter une nouvelle matière", ph_subject_name: "Nom de la matière",
+  label_gallery_upload: "Télécharger des images/fichiers (facultatif)", upload_zone_text: "Cliquez ici pour choisir des fichiers ou glissez-les ici",
+  btn_publish: "Publier et mettre à jour",
+  publish_content_title: "Publier un nouveau contenu", label_subject: "Matière",
+  label_content_type: "Type de contenu", type_lesson: "Leçon", type_solved: "Exercice corrigé", type_unsolved: "Exercice à résoudre",
+  label_deadline: "Date limite de remise", label_title: "Titre", label_body_text: "Texte du contenu (facultatif)",
+  label_attach_file: "Joindre un fichier (facultatif)",
+  side_home: "Accueil", side_home_content: "Accueil et gestion du contenu",
+  side_notifications: "Notifications", side_messages: "Messages", side_settings: "Paramètres",
+  tab_all: "Tout", tab_lessons: "Leçons", tab_solved: "Exercices corrigés", tab_unsolved: "Exercices à résoudre",
+  msg_tab_teachers: "Discussions enseignants", msg_tab_admin: "Messages de l'administration",
+  ph_type_message: "Écrivez votre message...", btn_send: "Envoyer",
+  settings_password_title: "🔒 Changer le mot de passe", settings_notif_toggle: "Activer les notifications",
+  btn_publish_content: "Publier un contenu", msg_tab_students: "Étudiants", msg_tab_admin_chat: "Administration",
+  side_edit_platform: "Modifier les données de la plateforme", side_requests: "Demandes d'inscription",
+  btn_edit_platform_data: "Modifier les données de l'institut",
+  msg_tab_teachers_chat: "Enseignants", msg_tab_broadcast: "Envoyer certificats et notes (diffusion)",
+  label_broadcast_message: "Texte de la diffusion (certificats/notes/annonce)", btn_send_broadcast: "Envoyer à tous",
+  no_content_yet: "Aucun contenu pour le moment.", no_notifications: "Aucune notification pour le moment.",
+  no_requests: "Aucune demande d'inscription pour le moment.", select_conversation: "Choisissez une conversation dans la liste pour commencer.",
+  btn_approve: "Accepter", btn_reject: "Refuser",
+  err_generic: "Une erreur est survenue, veuillez réessayer.", err_fill_fields: "Veuillez remplir tous les champs requis.",
+  err_wrong_credentials: "Nom d'utilisateur ou mot de passe incorrect.",
+  err_pending_account: "Votre compte est en attente d'approbation.",
+  success_registered: "Votre demande a été envoyée, en attente d'approbation de l'administration.",
+  success_otp_sent: "Le code de vérification a été envoyé à votre e-mail.",
+  success_password_changed: "Mot de passe changé avec succès.",
+  success_published: "Publié avec succès.",
+  deadline_label: "Date limite de remise :",
+  admin_pending_credentials_note: "Entrez admin comme identifiant et Admin123# comme mot de passe pour la première connexion.",
+}
+};
+let currentLang = "ar";
+function t(key){ return (I18N[currentLang] && I18N[currentLang][key]) || key; }
+
+function applyLanguage(lang){
+  currentLang = lang;
+  document.getElementById("htmlRoot").setAttribute("lang", lang);
+  document.getElementById("htmlRoot").setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
+  document.getElementById("langSwitchBtn").textContent = lang === "ar" ? "FR / Français" : "AR / العربية";
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key = el.getAttribute("data-i18n");
+    if (I18N[lang][key] !== undefined) el.textContent = I18N[lang][key];
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{
+    const key = el.getAttribute("data-i18n-ph");
+    if (I18N[lang][key] !== undefined) el.setAttribute("placeholder", I18N[lang][key]);
+  });
+  if (!state.instituteSettings || !state.instituteSettings.published){
+    document.getElementById("brandTitle").textContent = document.getElementById("liveTitleInput").value || t("default_title");
+  } else {
+    document.getElementById("brandTitle").textContent = state.instituteSettings.name || t("default_title");
+  }
+  // re-render dynamic screens that contain generated text
+  if (state.instituteSettings && state.instituteSettings.published) renderPortal();
+  if (state.currentProfile){
+    if (state.currentProfile.role === "student") renderStudentContent();
+    if (state.currentProfile.role === "teacher") renderTeacherContent();
+  }
+}
+
+// -------------------- 3) الحالة العامة (State) --------------------
+const state = {
+  session: null,
+  currentUser: null,       // auth user
+  currentProfile: null,    // profiles row
+  specialties: [],
+  subjects: [],
+  instituteSettings: null,
+  contents: [],
+  activeChatPeer: null,    // {id, name, role}
+  activeMsgView: "teachers",
+  otpPurpose: null,        // 'forgot' | 'student' | 'teacher' | 'admin'
+  otpEmail: null,
+  modalStack: [],
+  newSpecialtiesDraft: [],
+  newSubjectsDraft: [],
+  galleryFiles: [],
+};
+
+// -------------------- 4) أدوات مساعدة عامة --------------------
+function openModal(id){
+  document.getElementById(id).classList.add("show");
+  state.modalStack.push(id);
+}
+function closeModal(id){
+  document.getElementById(id).classList.remove("show");
+  state.modalStack = state.modalStack.filter(m=>m!==id);
+}
+function showAlert(id, msg){
+  const el = document.getElementById(id);
+  el.textContent = msg; el.classList.add("show");
+}
+function hideAlert(id){
+  document.getElementById(id).classList.remove("show");
+}
+function setLoading(btnSpinnerId, isLoading){
+  const el = document.getElementById(btnSpinnerId);
+  if (!el) return;
+  if (isLoading) el.classList.remove("hidden"); else el.classList.add("hidden");
+}
+function fmtDate(d){
+  try { return new Date(d).toLocaleString(currentLang === "ar" ? "ar-DZ" : "fr-FR"); } catch(e){ return d; }
+}
+
+document.addEventListener("click", (e)=>{
+  const closeTarget = e.target.closest("[data-close]");
+  if (closeTarget){ closeModal(closeTarget.getAttribute("data-close")); }
+  const backTarget = e.target.closest("[data-back]");
+  if (backTarget){
+    const current = backTarget.closest(".overlay").id;
+    closeModal(current);
+    openModal(backTarget.getAttribute("data-back"));
+  }
+  const eyeTarget = e.target.closest(".toggle-eye");
+  if (eyeTarget){
+    const inputEl = document.getElementById(eyeTarget.getAttribute("data-target"));
+    if (inputEl.type === "password"){ inputEl.type = "text"; eyeTarget.textContent = "🔒"; }
+    else { inputEl.type = "password"; eyeTarget.textContent = "👁️"; }
+  }
+});
+
+// -------------------- 5) قائمة النقاط الثلاث --------------------
+function closeDotsMenu(){
+  const menu = document.getElementById("dotsMenu");
+  menu.classList.remove("show", "positioned");
+}
+
+function openDotsMenu(){
+  const btn = document.getElementById("dotsBtn");
+  const menu = document.getElementById("dotsMenu");
+  const margin = 10; // هامش أمان من حواف الشاشة
+
+  // 1) نظهر القائمة (بدون أن تُرى بعد: visibility:hidden) لنتمكن من قياس عرضها الحقيقي
+  menu.classList.add("show");
+  const btnRect = btn.getBoundingClientRect();
+  const menuWidth = menu.offsetWidth;
+  const menuHeight = menu.offsetHeight;
+
+  // 2) نحسب أفضل موضع أفقي بحيث تبقى القائمة كاملة داخل حدود الشاشة
+  //    بغض النظر عن اتجاه الصفحة (RTL أو LTR) أو موضع الزر الفعلي
+  let left = btnRect.left; // المحاولة الافتراضية: محاذاة الحافة اليسرى للقائمة مع الزر
+  const overflowsRight = left + menuWidth + margin > window.innerWidth;
+  if (overflowsRight){
+    left = btnRect.right - menuWidth; // حاذِ الحافة اليمنى للقائمة مع الزر بدلاً من ذلك
+  }
+  if (left < margin) left = margin;
+  if (left + menuWidth > window.innerWidth - margin) left = window.innerWidth - margin - menuWidth;
+
+  // 3) نحسب الموضع العمودي (أسفل الزر، أو أعلاه إذا لم تتسع الشاشة تحته)
+  let top = btnRect.bottom + 8;
+  if (top + menuHeight + margin > window.innerHeight){
+    top = btnRect.top - menuHeight - 8;
+  }
+
+  menu.style.left = left + "px";
+  menu.style.top = top + "px";
+  menu.classList.add("positioned"); // الآن تصبح مرئية بعد ضبط موضعها بدقة
+}
+
+document.getElementById("dotsBtn").addEventListener("click", (e)=>{
+  e.stopPropagation();
+  const menu = document.getElementById("dotsMenu");
+  if (menu.classList.contains("show")) closeDotsMenu();
+  else openDotsMenu();
+});
+document.addEventListener("click", (e)=>{
+  // أغلق القائمة فقط إذا كان النقر خارج حاوية الزر/القائمة بالكامل
+  if (!e.target.closest("#menuContainer")){
+    closeDotsMenu();
+  }
+});
+// أعد ضبط الموضع أو أغلق القائمة عند تغيّر حجم الشاشة (مثل تدوير الجهاز)
+window.addEventListener("resize", closeDotsMenu);
+
+document.getElementById("langSwitchBtn").addEventListener("click", ()=>{
+  applyLanguage(currentLang === "ar" ? "fr" : "ar");
+});
+
+// عنوان حي عند الكتابة في حقل الترحيب
+document.getElementById("liveTitleInput").addEventListener("input", (e)=>{
+  if (!state.instituteSettings || !state.instituteSettings.published){
+    document.getElementById("brandTitle").textContent = e.target.value || t("default_title");
+  }
+});
+
+// -------------------- 6) فتح/تنقل النوافذ الأساسية --------------------
+function openLogin(){ hideAlert("loginAlert"); openModal("loginOverlay"); }
+function openRegister(){ hideAlert("registerAlert"); hideAlert("registerSuccess"); openModal("registerOverlay"); }
+
+document.getElementById("btnOpenLogin").addEventListener("click", openLogin);
+document.getElementById("btnOpenRegister").addEventListener("click", openRegister);
+document.getElementById("menuHome").addEventListener("click", (e)=>{ e.preventDefault(); goHome(); });
+document.getElementById("menuLogin").addEventListener("click", (e)=>{ e.preventDefault(); openLogin(); });
+document.getElementById("menuRegister").addEventListener("click", (e)=>{ e.preventDefault(); openRegister(); });
+document.getElementById("menuDashboard").addEventListener("click", (e)=>{ e.preventDefault(); showDashboardForRole(); });
+document.getElementById("menuLogout").addEventListener("click", async (e)=>{ e.preventDefault(); await doLogout(); });
+document.getElementById("linkGoRegister").addEventListener("click", (e)=>{ e.preventDefault(); closeModal("loginOverlay"); openRegister(); });
+document.getElementById("linkGoLogin").addEventListener("click", (e)=>{ e.preventDefault(); closeModal("registerOverlay"); openLogin(); });
+document.getElementById("linkForgotPassword").addEventListener("click", (e)=>{
+  e.preventDefault(); closeModal("loginOverlay");
+  document.getElementById("forgotStep1").classList.remove("hidden");
+  document.getElementById("forgotStep2").classList.add("hidden");
+  hideAlert("forgotAlert"); hideAlert("forgotSuccess");
+  openModal("forgotOverlay");
+});
+
+function goHome(){
+  hideAllScreens();
+  if (state.instituteSettings && state.instituteSettings.published) {
+    document.getElementById("portalScreen").classList.remove("hidden");
+  } else {
+    document.getElementById("welcomeScreen").classList.remove("hidden");
+  }
+}
+function hideAllScreens(){
+  document.getElementById("welcomeScreen").classList.add("hidden");
+  document.getElementById("portalScreen").classList.add("hidden");
+  document.getElementById("studentDash").classList.add("hidden");
+  document.getElementById("teacherDash").classList.add("hidden");
+  document.getElementById("adminDash").classList.add("hidden");
+}
+function showDashboardForRole(){
+  if (!state.currentProfile) return;
+  hideAllScreens();
+  if (state.currentProfile.role === "student"){ document.getElementById("studentDash").classList.remove("hidden"); renderStudentContent(); loadStudentNotifications(); }
+  if (state.currentProfile.role === "teacher"){ document.getElementById("teacherDash").classList.remove("hidden"); renderTeacherContent(); loadTeacherNotifications(); }
+  if (state.currentProfile.role === "admin"){ document.getElementById("adminDash").classList.remove("hidden"); loadAdminRequests(); }
+}
+
+// -------------------- 7) تحميل البيانات الأساسية (تخصصات/مواد/إعدادات) --------------------
+async function loadCoreData(){
+  const [{data: specialties}, {data: subjects}, {data: settings}, {data: media}] = await Promise.all([
+    sb.from("specialties").select("*").order("id"),
+    sb.from("subjects").select("*").order("id"),
+    sb.from("institute_settings").select("*").eq("id",1).single(),
+    sb.from("institute_media").select("*").order("id"),
+  ]);
+  state.specialties = specialties || [];
+  state.subjects = subjects || [];
+  state.instituteSettings = settings || null;
+  state.media = media || [];
+  populateSpecialtySelects();
+  if (state.instituteSettings && state.instituteSettings.published){
+    renderPortal();
+    hideAllScreens();
+    document.getElementById("portalScreen").classList.remove("hidden");
+    document.getElementById("brandTitle").textContent = state.instituteSettings.name || t("default_title");
+  }
+}
+
+function populateSpecialtySelects(){
+  const opts = state.specialties.map(s=>`<option value="${s.id}">${s.name}</option>`).join("");
+  document.getElementById("regSpecialtyStudent").innerHTML = opts;
+  document.getElementById("regSpecialtyTeacher").innerHTML = opts;
+  document.getElementById("pubSpecialty").innerHTML = opts;
+  const subOpts = state.subjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join("");
+  document.getElementById("regSubjectTeacher").innerHTML = subOpts;
+  document.getElementById("pubSubject").innerHTML = subOpts;
+}
+
+function renderPortal(){
+  const s = state.instituteSettings;
+  document.getElementById("portalInstituteName").textContent = s.name || "";
+  document.getElementById("portalInstituteDesc").textContent = s.description || "";
+  document.getElementById("portalSpecialtyGrid").innerHTML = state.specialties.map(sp=>`
+    <button class="specialty-btn" data-spec-id="${sp.id}">🎓 ${sp.name}</button>
+  `).join("");
+  document.querySelectorAll(".specialty-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const sp = state.specialties.find(x=> String(x.id) === btn.getAttribute("data-spec-id"));
+      document.getElementById("specialtyModalTitle").textContent = "🎓 " + sp.name;
+      document.getElementById("specialtyModalDesc").textContent = sp.description || "-";
+      openModal("specialtyOverlay");
+    });
+  });
+  const gallery = state.media || [];
+  const galleryCard = document.getElementById("galleryCard");
+  if (!gallery.length){
+    galleryCard.style.display = "none";
+  } else {
+    galleryCard.style.display = "";
+    document.getElementById("galleryGrid").innerHTML = gallery.map(g=>`<img src="${g.file_path}" alt="gallery">`).join("");
+  }
+}
+
+// -------------------- 8) التسجيل (Register) --------------------
+document.querySelectorAll('input[name="regRole"]').forEach(r=>{
+  r.addEventListener("change", ()=>{
+    const isStudent = document.querySelector('input[name="regRole"]:checked').value === "student";
+    document.getElementById("studentFields").classList.toggle("hidden", !isStudent);
+    document.getElementById("teacherFields").classList.toggle("hidden", isStudent);
+  });
+});
+
+function validateSpecialtyCode(code){
+  return /^[A-Z0-9-]{5,}$/.test(code);
+}
+
+document.getElementById("regSpecialtyCode").addEventListener("input", (e)=>{
+  e.target.value = e.target.value.toUpperCase();
+});
+
+document.getElementById("btnDoRegister").addEventListener("click", async ()=>{
+  hideAlert("registerAlert"); hideAlert("registerSuccess");
+  document.getElementById("specialtyCodeError").classList.remove("show");
+  document.getElementById("passwordMatchError").classList.remove("show");
+
+  const role = document.querySelector('input[name="regRole"]:checked').value;
+  const firstName = document.getElementById("regFirstName").value.trim();
+  const lastName = document.getElementById("regLastName").value.trim();
+  const email = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value;
+  const passwordConfirm = document.getElementById("regPasswordConfirm").value;
+
+  if (!firstName || !lastName || !email || !password || !passwordConfirm){
+    showAlert("registerAlert", t("err_fill_fields")); return;
+  }
+  if (password !== passwordConfirm){
+    document.getElementById("passwordMatchError").classList.add("show");
+    return;
+  }
+
+  let specialtyId = null, specialtyCode = null, teacherSpecialtyIds = [], teacherSubjectIds = [];
+  if (role === "student"){
+    specialtyId = document.getElementById("regSpecialtyStudent").value;
+    specialtyCode = document.getElementById("regSpecialtyCode").value.trim();
+    if (!validateSpecialtyCode(specialtyCode)){
+      document.getElementById("specialtyCodeError").classList.add("show");
+      return;
+    }
+  } else {
+    teacherSpecialtyIds = Array.from(document.getElementById("regSpecialtyTeacher").selectedOptions).map(o=>o.value);
+    teacherSubjectIds = Array.from(document.getElementById("regSubjectTeacher").selectedOptions).map(o=>o.value);
+  }
+
+  const btn = document.getElementById("btnDoRegister");
+  btn.disabled = true; setLoading("registerSpinner", true);
+  try{
+    const { data: signUpData, error: signUpError } = await sb.auth.signUp({ email, password });
+    if (signUpError) throw signUpError;
+    const userId = signUpData.user ? signUpData.user.id : null;
+    if (!userId) throw new Error("no-user-id");
+
+    const profilePayload = {
+      id: userId, role, first_name: firstName, last_name: lastName, email,
+      status: "pending",
+    };
+    if (role === "student"){ profilePayload.specialty_id = specialtyId; profilePayload.specialty_code = specialtyCode; }
+    const { error: profileError } = await sb.from("profiles").insert(profilePayload);
+    if (profileError) throw profileError;
+
+    if (role === "teacher"){
+      if (teacherSpecialtyIds.length){
+        await sb.from("teacher_specialties").insert(teacherSpecialtyIds.map(id=>({teacher_id:userId, specialty_id:id})));
+      }
+      if (teacherSubjectIds.length){
+        await sb.from("teacher_subjects").insert(teacherSubjectIds.map(id=>({teacher_id:userId, subject_id:id})));
+      }
+    }
+    showAlert("registerSuccess", t("success_registered"));
+    document.getElementById("registerSuccess").classList.remove("alert-error");
+    document.getElementById("registerSuccess").classList.add("show");
+  } catch(err){
+    console.error(err);
+    showAlert("registerAlert", err.message || t("err_generic"));
+  } finally {
+    btn.disabled = false; setLoading("registerSpinner", false);
+  }
+});
+
+// -------------------- 9) تسجيل الدخول (Login) --------------------
+document.getElementById("btnDoLogin").addEventListener("click", async ()=>{
+  hideAlert("loginAlert");
+  const identifier = document.getElementById("loginIdentifier").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  if (!identifier || !password){ showAlert("loginAlert", t("err_fill_fields")); return; }
+
+  const btn = document.getElementById("btnDoLogin");
+  btn.disabled = true; setLoading("loginSpinner", true);
+  try{
+    // مسار الإدارة الافتراضي (bootstrap) قبل إنشاء حساب Supabase Auth حقيقي
+    if (identifier === ADMIN_DEFAULT_USERNAME && !state.instituteSettings?.admin_bootstrap_done){
+      if (password === ADMIN_DEFAULT_PASSWORD){
+        closeModal("loginOverlay");
+        openModal("adminFirstLoginOverlay");
+        return;
+      } else {
+        showAlert("loginAlert", t("err_wrong_credentials")); return;
+      }
+    }
+
+    const { data, error } = await sb.auth.signInWithPassword({ email: identifier, password });
+    if (error) throw error;
+    await afterLoginRouting(data.user);
+  } catch(err){
+    console.error(err);
+    showAlert("loginAlert", t("err_wrong_credentials"));
+  } finally {
+    btn.disabled = false; setLoading("loginSpinner", false);
+  }
+});
+
+async function afterLoginRouting(user){
+  state.currentUser = user;
+  const { data: profile, error } = await sb.from("profiles").select("*").eq("id", user.id).single();
+  if (error || !profile){ showAlert("loginAlert", t("err_generic")); return; }
+  if (profile.role !== "admin" && profile.status !== "approved"){
+    showAlert("loginAlert", t("err_pending_account"));
+    await sb.auth.signOut();
+    return;
+  }
+  state.currentProfile = profile;
+  closeModal("loginOverlay");
+  document.getElementById("menuLogin").classList.add("hidden");
+  document.getElementById("menuRegister").classList.add("hidden");
+  document.getElementById("menuDashboard").classList.remove("hidden");
+  document.getElementById("menuLogout").classList.remove("hidden");
+  showDashboardForRole();
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+  state.currentUser = null; state.currentProfile = null;
+  document.getElementById("menuLogin").classList.remove("hidden");
+  document.getElementById("menuRegister").classList.remove("hidden");
+  document.getElementById("menuDashboard").classList.add("hidden");
+  document.getElementById("menuLogout").classList.add("hidden");
+  goHome();
+}
+
+// -------------------- 10) نافذة تأمين حساب الإدارة الأولى --------------------
+document.getElementById("btnAdminFirstSave").addEventListener("click", async ()=>{
+  hideAlert("adminFirstAlert");
+  const email = document.getElementById("adminFirstEmail").value.trim();
+  const pw = document.getElementById("adminFirstPassword").value;
+  const pwConfirm = document.getElementById("adminFirstPasswordConfirm").value;
+  if (!email || !pw || !pwConfirm){ showAlert("adminFirstAlert", t("err_fill_fields")); return; }
+  if (pw !== pwConfirm){ showAlert("adminFirstAlert", t("err_password_match")); return; }
+
+  const btn = document.getElementById("btnAdminFirstSave");
+  btn.disabled = true; setLoading("adminFirstSpinner", true);
+  try{
+    const { data: signUpData, error: signUpError } = await sb.auth.signUp({ email, password: pw });
+    if (signUpError) throw signUpError;
+    const userId = signUpData.user.id;
+    await sb.from("profiles").insert({ id: userId, role: "admin", email, status: "approved", first_login_done: true });
+    await sb.from("institute_settings").update({ admin_bootstrap_done: true, admin_user_id: userId }).eq("id", 1);
+
+    const { data: loginData, error: loginError } = await sb.auth.signInWithPassword({ email, password: pw });
+    if (loginError) throw loginError;
+    state.instituteSettings = { ...(state.instituteSettings||{}), admin_bootstrap_done: true };
+    closeModal("adminFirstLoginOverlay");
+    await afterLoginRouting(loginData.user);
+    openAdminSetup();
+  } catch(err){
+    console.error(err);
+    showAlert("adminFirstAlert", err.message || t("err_generic"));
+  } finally {
+    btn.disabled = false; setLoading("adminFirstSpinner", false);
+  }
+});
+
+// -------------------- 11) نسيان كلمة المرور (OTP) --------------------
+document.getElementById("btnSendOtp").addEventListener("click", async ()=>{
+  hideAlert("forgotAlert"); hideAlert("forgotSuccess");
+  const email = document.getElementById("forgotEmail").value.trim();
+  if (!email){ showAlert("forgotAlert", t("err_fill_fields")); return; }
+  const btn = document.getElementById("btnSendOtp");
+  btn.disabled = true; setLoading("sendOtpSpinner", true);
+  try{
+    const { error } = await sb.auth.signInWithOtp({ email });
+    if (error) throw error;
+    state.otpEmail = email;
+    document.getElementById("forgotStep1").classList.add("hidden");
+    document.getElementById("forgotStep2").classList.remove("hidden");
+    showAlert("forgotSuccess", t("success_otp_sent"));
+    document.getElementById("forgotSuccess").classList.remove("alert-error");
+  } catch(err){
+    console.error(err);
+    showAlert("forgotAlert", err.message || t("err_generic"));
+  } finally { btn.disabled = false; setLoading("sendOtpSpinner", false); }
+});
+
+document.getElementById("btnConfirmOtp").addEventListener("click", async ()=>{
+  hideAlert("forgotAlert");
+  const token = document.getElementById("otpCode").value.trim();
+  const newPassword = document.getElementById("otpNewPassword").value;
+  if (!token || !newPassword){ showAlert("forgotAlert", t("err_fill_fields")); return; }
+  const btn = document.getElementById("btnConfirmOtp");
+  btn.disabled = true; setLoading("confirmOtpSpinner", true);
+  try{
+    const { error: verifyError } = await sb.auth.verifyOtp({ email: state.otpEmail, token, type: "email" });
+    if (verifyError) throw verifyError;
+    const { error: updateError } = await sb.auth.updateUser({ password: newPassword });
+    if (updateError) throw updateError;
+    showAlert("forgotSuccess", t("success_password_changed"));
+    document.getElementById("forgotSuccess").classList.remove("alert-error"); document.getElementById("forgotSuccess").classList.add("show");
+    setTimeout(()=>closeModal("forgotOverlay"), 1500);
+  } catch(err){
+    console.error(err);
+    showAlert("forgotAlert", err.message || t("err_generic"));
+  } finally { btn.disabled = false; setLoading("confirmOtpSpinner", false); }
+});
+
+// -------------------- 12) إعداد المعهد (Admin Setup) --------------------
+function openAdminSetup(){
+  document.getElementById("setupInstituteName").value = state.instituteSettings?.name || "";
+  document.getElementById("setupInstituteDesc").value = state.instituteSettings?.description || "";
+  state.newSpecialtiesDraft = []; state.newSubjectsDraft = []; state.galleryFiles = [];
+  renderChipLists();
+  document.getElementById("galleryPreview").innerHTML = "";
+  hideAlert("adminSetupAlert");
+  openModal("adminSetupOverlay");
+}
+document.getElementById("btnEditPlatform").addEventListener("click", openAdminSetup);
+
+function renderChipLists(){
+  document.getElementById("specialtyChipList").innerHTML = state.newSpecialtiesDraft.map((s,i)=>`
+    <span class="chip">${s}<button data-idx="${i}" data-kind="spec">×</button></span>`).join("");
+  document.getElementById("subjectChipList").innerHTML = state.newSubjectsDraft.map((s,i)=>`
+    <span class="chip">${s}<button data-idx="${i}" data-kind="subj">×</button></span>`).join("");
+  document.querySelectorAll("#specialtyChipList button, #subjectChipList button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const idx = parseInt(b.getAttribute("data-idx"));
+      if (b.getAttribute("data-kind") === "spec") state.newSpecialtiesDraft.splice(idx,1);
+      else state.newSubjectsDraft.splice(idx,1);
+      renderChipLists();
+    });
+  });
+}
+document.getElementById("btnAddSpecialty").addEventListener("click", ()=>{
+  const v = document.getElementById("newSpecialtyInput").value.trim();
+  if (v){ state.newSpecialtiesDraft.push(v); document.getElementById("newSpecialtyInput").value=""; renderChipLists(); }
+});
+document.getElementById("btnAddSubject").addEventListener("click", ()=>{
+  const v = document.getElementById("newSubjectInput").value.trim();
+  if (v){ state.newSubjectsDraft.push(v); document.getElementById("newSubjectInput").value=""; renderChipLists(); }
+});
+
+document.getElementById("uploadZone").addEventListener("click", ()=> document.getElementById("galleryFileInput").click());
+document.getElementById("galleryFileInput").addEventListener("change", (e)=>{
+  state.galleryFiles = Array.from(e.target.files);
+  const preview = document.getElementById("galleryPreview");
+  preview.innerHTML = "";
+  state.galleryFiles.forEach(f=>{
+    const url = URL.createObjectURL(f);
+    preview.innerHTML += `<img src="${url}">`;
+  });
+});
+
+async function uploadToStorage(file, folder){
+  const path = `${folder}/${Date.now()}_${file.name.replace(/\s+/g,'_')}`;
+  const { error } = await sb.storage.from(STORAGE_BUCKET).upload(path, file, { upsert: true });
+  if (error) throw error;
+  const { data } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}
+
+document.getElementById("btnPublishSetup").addEventListener("click", async ()=>{
+  hideAlert("adminSetupAlert");
+  const name = document.getElementById("setupInstituteName").value.trim();
+  const desc = document.getElementById("setupInstituteDesc").value.trim();
+  if (!name){ showAlert("adminSetupAlert", t("err_fill_fields")); return; }
+
+  const btn = document.getElementById("btnPublishSetup");
+  btn.disabled = true; setLoading("publishSpinner", true);
+  try{
+    for (const s of state.newSpecialtiesDraft){
+      await sb.from("specialties").upsert({ name: s }, { onConflict: "name" });
+    }
+    for (const s of state.newSubjectsDraft){
+      await sb.from("subjects").upsert({ name: s }, { onConflict: "name" });
+    }
+    for (const file of state.galleryFiles){
+      const url = await uploadToStorage(file, "gallery");
+      await sb.from("institute_media").insert({ file_path: url });
+    }
+    await sb.from("institute_settings").update({ name, description: desc, published: true }).eq("id", 1);
+
+    await loadCoreData();
+    closeModal("adminSetupOverlay");
+    goHome();
+    showDashboardForRole();
+  } catch(err){
+    console.error(err);
+    showAlert("adminSetupAlert", err.message || t("err_generic"));
+  } finally { btn.disabled = false; setLoading("publishSpinner", false); }
+});
+
+// -------------------- 13) الأقسام الجانبية (Sidebar tabs) --------------------
+document.querySelectorAll(".sidebar-item").forEach(item=>{
+  item.addEventListener("click", ()=>{
+    const dash = item.getAttribute("data-dash");
+    const tab = item.getAttribute("data-tab");
+    document.querySelectorAll(`.sidebar-item[data-dash="${dash}"]`).forEach(i=>i.classList.remove("active"));
+    item.classList.add("active");
+    document.querySelectorAll(`#${dash}Dash .dash-tab`).forEach(d=>d.classList.add("hidden"));
+    document.getElementById(`${dash}-${tab}`).classList.remove("hidden");
+    if (tab === "messages"){
+      if (dash === "student") loadStudentChatList();
+      if (dash === "teacher") loadTeacherChatList();
+      if (dash === "admin") loadAdminChatList();
+    }
+    if (tab === "requests" && dash === "admin") loadAdminRequests();
+  });
+});
+
+// -------------------- 14) لوحة الطالب: المحتوى --------------------
+async function renderStudentContent(){
+  const profile = state.currentProfile;
+  const { data, error } = await sb.from("contents").select("*").eq("specialty_id", profile.specialty_id).order("created_at", { ascending:false });
+  state.contents = data || [];
+  const activeFilter = document.querySelector("#studentContentTabs .tab-btn.active")?.getAttribute("data-filter") || "all";
+  renderContentList("studentContentList", state.contents, activeFilter, false);
+}
+document.querySelectorAll("#studentContentTabs .tab-btn").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    document.querySelectorAll("#studentContentTabs .tab-btn").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    renderContentList("studentContentList", state.contents, b.getAttribute("data-filter"), false);
+  });
+});
+
+function typeLabel(type){
+  return type === "lesson" ? t("type_lesson") : type === "solved" ? t("type_solved") : t("type_unsolved");
+}
+function typeClass(type){
+  return type === "lesson" ? "type-lesson" : type === "solved" ? "type-solved" : "type-unsolved";
+}
+
+function renderContentList(containerId, list, filter, isTeacherView){
+  const filtered = filter === "all" ? list : list.filter(c=>c.type === filter);
+  const el = document.getElementById(containerId);
+  if (!filtered.length){
+    el.innerHTML = `<div class="empty-state"><div class="big-icon">📭</div><div>${t("no_content_yet")}</div></div>`;
+    return;
+  }
+  el.innerHTML = filtered.map(c=>`
+    <div class="content-card">
+      <div class="content-card-head">
+        <strong>${c.title}</strong>
+        <span class="type-pill ${typeClass(c.type)}">${typeLabel(c.type)}</span>
+      </div>
+      ${c.body ? `<p style="color:var(--text-light);font-size:13.5px;line-height:1.7;">${c.body}</p>` : ""}
+      ${c.file_url ? `<p><a href="${c.file_url}" target="_blank" class="btn btn-outline btn-sm">📎 ${c.file_url.split('/').pop()}</a></p>` : ""}
+      ${c.type === "unsolved" && c.deadline ? `<div class="deadline-note">⏰ ${t("deadline_label")} ${fmtDate(c.deadline)}</div>` : ""}
+      <p class="small-note">${fmtDate(c.created_at)}</p>
+    </div>
+  `).join("");
+}
+
+// -------------------- 15) لوحة الأستاذ: نشر المحتوى --------------------
+document.getElementById("btnOpenPublish").addEventListener("click", ()=>{
+  hideAlert("publishContentAlert");
+  document.getElementById("pubTitle").value = "";
+  document.getElementById("pubBody").value = "";
+  document.getElementById("pubFileInput").value = "";
+  document.getElementById("pubFileName").textContent = "";
+  document.getElementById("pubDeadline").value = "";
+  openModal("publishContentOverlay");
+});
+document.getElementById("pubType").addEventListener("change", (e)=>{
+  document.getElementById("pubDeadlineGroup").classList.toggle("hidden", e.target.value !== "unsolved");
+});
+document.getElementById("pubUploadZone").addEventListener("click", ()=> document.getElementById("pubFileInput").click());
+document.getElementById("pubFileInput").addEventListener("change", (e)=>{
+  document.getElementById("pubFileName").textContent = e.target.files[0]?.name || "";
+});
+
+document.getElementById("btnDoPublish").addEventListener("click", async ()=>{
+  hideAlert("publishContentAlert");
+  const specialtyId = document.getElementById("pubSpecialty").value;
+  const subjectId = document.getElementById("pubSubject").value;
+  const type = document.getElementById("pubType").value;
+  const title = document.getElementById("pubTitle").value.trim();
+  const body = document.getElementById("pubBody").value.trim();
+  const deadline = document.getElementById("pubDeadline").value;
+  const file = document.getElementById("pubFileInput").files[0];
+
+  if (!title || (!body && !file)){ showAlert("publishContentAlert", t("err_fill_fields")); return; }
+  if (type === "unsolved" && !deadline){ showAlert("publishContentAlert", t("err_fill_fields")); return; }
+
+  const btn = document.getElementById("btnDoPublish");
+  btn.disabled = true; setLoading("publishContentSpinner", true);
+  try{
+    let fileUrl = null;
+    if (file) fileUrl = await uploadToStorage(file, "contents");
+    const payload = {
+      teacher_id: state.currentProfile.id, specialty_id: specialtyId, subject_id: subjectId,
+      type, title, body: body || null, file_url: fileUrl,
+      deadline: type === "unsolved" ? new Date(deadline).toISOString() : null,
+    };
+    const { error } = await sb.from("contents").insert(payload);
+    if (error) throw error;
+
+    // إشعار الطلاب المعنيين بنفس التخصص
+    const { data: students } = await sb.from("profiles").select("id").eq("role","student").eq("specialty_id", specialtyId).eq("status","approved");
+    if (students && students.length){
+      await sb.from("notifications").insert(students.map(s=>({ user_id: s.id, type:"new_content", message: `${t("btn_publish_content")}: ${title}` })));
+    }
+    closeModal("publishContentOverlay");
+    renderTeacherContent();
+  } catch(err){
+    console.error(err);
+    showAlert("publishContentAlert", err.message || t("err_generic"));
+  } finally { btn.disabled = false; setLoading("publishContentSpinner", false); }
+});
+
+async function renderTeacherContent(){
+  const { data } = await sb.from("contents").select("*").eq("teacher_id", state.currentProfile.id).order("created_at",{ascending:false});
+  state.contents = data || [];
+  renderContentList("teacherContentList", state.contents, "all", true);
+}
+
+// -------------------- 16) الإشعارات --------------------
+async function loadStudentNotifications(){
+  const { data } = await sb.from("notifications").select("*").eq("user_id", state.currentProfile.id).order("created_at",{ascending:false});
+  renderNotifList("studentNotifList", data || []);
+  updateNotifBadge("studentNotifBadge", data || []);
+}
+async function loadTeacherNotifications(){
+  const { data } = await sb.from("notifications").select("*").eq("user_id", state.currentProfile.id).order("created_at",{ascending:false});
+  renderNotifList("teacherNotifList", data || []);
+  updateNotifBadge("teacherNotifBadge", data || []);
+}
+function updateNotifBadge(id, list){
+  const unread = list.filter(n=>!n.is_read).length;
+  const badge = document.getElementById(id);
+  if (unread > 0){ badge.textContent = unread; badge.classList.remove("hidden"); } else badge.classList.add("hidden");
+}
+function renderNotifList(containerId, list){
+  const el = document.getElementById(containerId);
+  if (!list.length){ el.innerHTML = `<div class="empty-state"><div class="big-icon">🔕</div><div>${t("no_notifications")}</div></div>`; return; }
+  el.innerHTML = list.map(n=>`
+    <div class="notif-item ${!n.is_read?'unread':''}">
+      <span class="notif-icon">🔔</span>
+      <div><div>${n.message}</div><div class="small-note">${fmtDate(n.created_at)}</div></div>
+    </div>`).join("");
+  const ids = list.filter(n=>!n.is_read).map(n=>n.id);
+  if (ids.length) sb.from("notifications").update({is_read:true}).in("id", ids).then(()=>{});
+}
+
+// -------------------- 17) الرسائل (Messages / Chat) --------------------
+function bubbleHTML(m, myId){
+  if (m.read_only) return `<div class="bubble readonly">${m.content}<div class="small-note">${fmtDate(m.created_at)}</div></div>`;
+  const mine = m.sender_id === myId;
+  return `<div class="bubble ${mine?'me':'them'}">${m.content}<div class="small-note" style="opacity:.8;">${fmtDate(m.created_at)}</div></div>`;
+}
+
+async function loadStudentChatList(){
+  const view = document.querySelector('#student-messages .msg-tabs .tab-btn.active')?.getAttribute("data-msgview") || "teachers";
+  if (view === "admin"){
+    document.getElementById("studentChatInputRow").style.display = "none";
+    const { data } = await sb.from("messages").select("*").eq("receiver_id", state.currentProfile.id).is("sender_id", null).order("created_at");
+    // إدارة => بث readonly: نجلب أيضاً الرسائل الموجهة لدور الطالب
+    const { data: broadcasts } = await sb.from("messages").select("*").eq("receiver_role","student").eq("is_broadcast", true).order("created_at");
+    document.getElementById("studentChatList").innerHTML = `<div class="chat-list-item active">${t("msg_tab_admin")}</div>`;
+    document.getElementById("studentChatMessages").innerHTML = (broadcasts||[]).map(m=>bubbleHTML(m, state.currentProfile.id)).join("") || `<div class="empty-state">${t("select_conversation")}</div>`;
+  } else {
+    document.getElementById("studentChatInputRow").style.display = "";
+    const { data: teachers } = await sb.from("profiles").select("id,first_name,last_name").eq("role","teacher").eq("status","approved");
+    document.getElementById("studentChatList").innerHTML = (teachers||[]).map(tch=>`
+      <div class="chat-list-item" data-id="${tch.id}" data-name="${tch.first_name} ${tch.last_name}">${tch.first_name} ${tch.last_name}</div>`).join("");
+    document.querySelectorAll("#studentChatList .chat-list-item").forEach(item=>{
+      item.addEventListener("click", ()=>{
+        document.querySelectorAll("#studentChatList .chat-list-item").forEach(i=>i.classList.remove("active"));
+        item.classList.add("active");
+        state.activeChatPeer = { id: item.getAttribute("data-id"), name: item.getAttribute("data-name") };
+        loadChatMessages("studentChatMessages", state.activeChatPeer.id);
+      });
+    });
+    document.getElementById("studentChatMessages").innerHTML = `<div class="empty-state">${t("select_conversation")}</div>`;
+  }
+}
+document.querySelectorAll('#student-messages .msg-tabs .tab-btn').forEach(b=>{
+  b.addEventListener("click", ()=>{
+    document.querySelectorAll('#student-messages .msg-tabs .tab-btn').forEach(x=>x.classList.remove("active"));
+    b.classList.add("active"); loadStudentChatList();
+  });
+});
+document.getElementById("studentChatSend").addEventListener("click", ()=> sendChatMessage("studentChatInput","studentChatMessages"));
+
+async function loadTeacherChatList(){
+  const view = document.querySelector('#teacher-messages .msg-tabs .tab-btn.active')?.getAttribute("data-msgview") || "students";
+  let peers = [];
+  if (view === "students"){
+    const { data } = await sb.from("profiles").select("id,first_name,last_name").eq("role","student").eq("status","approved");
+    peers = data || [];
+  } else {
+    const { data } = await sb.from("profiles").select("id,first_name,last_name").eq("role","admin");
+    peers = data || [];
+  }
+  document.getElementById("teacherChatList").innerHTML = peers.map(p=>`
+    <div class="chat-list-item" data-id="${p.id}" data-name="${p.first_name||''} ${p.last_name||''}">${p.first_name||'—'} ${p.last_name||''}</div>`).join("");
+  document.querySelectorAll("#teacherChatList .chat-list-item").forEach(item=>{
+    item.addEventListener("click", ()=>{
+      document.querySelectorAll("#teacherChatList .chat-list-item").forEach(i=>i.classList.remove("active"));
+      item.classList.add("active");
+      state.activeChatPeer = { id: item.getAttribute("data-id"), name: item.getAttribute("data-name") };
+      loadChatMessages("teacherChatMessages", state.activeChatPeer.id);
+    });
+  });
+  document.getElementById("teacherChatMessages").innerHTML = `<div class="empty-state">${t("select_conversation")}</div>`;
+}
+document.querySelectorAll('#teacher-messages .msg-tabs .tab-btn').forEach(b=>{
+  b.addEventListener("click", ()=>{
+    document.querySelectorAll('#teacher-messages .msg-tabs .tab-btn').forEach(x=>x.classList.remove("active"));
+    b.classList.add("active"); loadTeacherChatList();
+  });
+});
+document.getElementById("teacherChatSend").addEventListener("click", ()=> sendChatMessage("teacherChatInput","teacherChatMessages"));
+
+async function loadAdminChatList(){
+  const view = document.querySelector('#admin-messages .msg-tabs .tab-btn.active')?.getAttribute("data-msgview") || "teachers";
+  document.getElementById("adminMsgTeachersView").classList.toggle("hidden", view !== "teachers");
+  document.getElementById("adminBroadcastView").classList.toggle("hidden", view !== "broadcast");
+  if (view !== "teachers") return;
+  const { data: teachers } = await sb.from("profiles").select("id,first_name,last_name").eq("role","teacher").eq("status","approved");
+  document.getElementById("adminChatList").innerHTML = (teachers||[]).map(tch=>`
+    <div class="chat-list-item" data-id="${tch.id}" data-name="${tch.first_name} ${tch.last_name}">${tch.first_name} ${tch.last_name}</div>`).join("");
+  document.querySelectorAll("#adminChatList .chat-list-item").forEach(item=>{
+    item.addEventListener("click", ()=>{
+      document.querySelectorAll("#adminChatList .chat-list-item").forEach(i=>i.classList.remove("active"));
+      item.classList.add("active");
+      state.activeChatPeer = { id: item.getAttribute("data-id"), name: item.getAttribute("data-name") };
+      loadChatMessages("adminChatMessages", state.activeChatPeer.id);
+    });
+  });
+  document.getElementById("adminChatMessages").innerHTML = `<div class="empty-state">${t("select_conversation")}</div>`;
+}
+document.querySelectorAll('#admin-messages .msg-tabs .tab-btn').forEach(b=>{
+  b.addEventListener("click", ()=>{
+    document.querySelectorAll('#admin-messages .msg-tabs .tab-btn').forEach(x=>x.classList.remove("active"));
+    b.classList.add("active"); loadAdminChatList();
+  });
+});
+document.getElementById("adminChatSend").addEventListener("click", ()=> sendChatMessage("adminChatInput","adminChatMessages"));
+
+document.getElementById("btnSendBroadcast").addEventListener("click", async ()=>{
+  const text = document.getElementById("broadcastText").value.trim();
+  if (!text) return;
+  await sb.from("messages").insert({
+    sender_id: state.currentProfile.id, sender_role:"admin", receiver_role:"student",
+    content: text, is_broadcast: true, read_only: true,
+  });
+  const { data: students } = await sb.from("profiles").select("id").eq("role","student").eq("status","approved");
+  if (students && students.length){
+    await sb.from("notifications").insert(students.map(s=>({ user_id: s.id, type:"admin_broadcast", message: text })));
+  }
+  document.getElementById("broadcastText").value = "";
+});
+
+async function loadChatMessages(containerId, peerId){
+  const myId = state.currentProfile.id;
+  const { data } = await sb.from("messages")
+    .select("*")
+    .or(`and(sender_id.eq.${myId},receiver_id.eq.${peerId}),and(sender_id.eq.${peerId},receiver_id.eq.${myId})`)
+    .order("created_at");
+  const el = document.getElementById(containerId);
+  el.innerHTML = (data||[]).map(m=>bubbleHTML(m, myId)).join("") || `<div class="empty-state">${t("select_conversation")}</div>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+async function sendChatMessage(inputId, containerId){
+  const input = document.getElementById(inputId);
+  const text = input.value.trim();
+  if (!text || !state.activeChatPeer) return;
+  const myRole = state.currentProfile.role;
+  await sb.from("messages").insert({
+    sender_id: state.currentProfile.id, sender_role: myRole,
+    receiver_id: state.activeChatPeer.id, content: text,
+  });
+  await sb.from("notifications").insert({
+    user_id: state.activeChatPeer.id, type:"new_message",
+    message: `${state.currentProfile.first_name||myRole}: ${text}`.slice(0,140),
+  });
+  input.value = "";
+  loadChatMessages(containerId, state.activeChatPeer.id);
+}
+
+// -------------------- 18) طلبات التسجيل (Admin) --------------------
+async function loadAdminRequests(){
+  const { data } = await sb.from("profiles").select("*").eq("status","pending").order("created_at");
+  const el = document.getElementById("adminRequestsList");
+  const badge = document.getElementById("adminReqBadge");
+  if (!data || !data.length){
+    el.innerHTML = `<div class="empty-state"><div class="big-icon">📭</div><div>${t("no_requests")}</div></div>`;
+    badge.classList.add("hidden");
+    return;
+  }
+  badge.textContent = data.length; badge.classList.remove("hidden");
+  el.innerHTML = data.map(p=>`
+    <div class="content-card">
+      <div class="content-card-head">
+        <strong>${p.first_name} ${p.last_name}</strong>
+        <span class="type-pill ${p.role==='teacher'?'type-lesson':'type-solved'}">${p.role==='teacher'?t('role_teacher'):t('role_student')}</span>
+      </div>
+      <p class="small-note">${p.email}</p>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn btn-success btn-sm" data-approve="${p.id}">${t("btn_approve")}</button>
+        <button class="btn btn-danger btn-sm" data-reject="${p.id}">${t("btn_reject")}</button>
+      </div>
+    </div>`).join("");
+  document.querySelectorAll("[data-approve]").forEach(b=>b.addEventListener("click", async ()=>{
+    const id = b.getAttribute("data-approve");
+    await sb.from("profiles").update({status:"approved"}).eq("id", id);
+    await sb.from("notifications").insert({ user_id:id, type:"account_approved", message: t("success_registered") });
+    loadAdminRequests();
+  }));
+  document.querySelectorAll("[data-reject]").forEach(b=>b.addEventListener("click", async ()=>{
+    const id = b.getAttribute("data-reject");
+    await sb.from("profiles").update({status:"rejected"}).eq("id", id);
+    loadAdminRequests();
+  }));
+}
+
+// -------------------- 19) الإعدادات: تغيير كلمة المرور عبر OTP + إشعارات --------------------
+function wireSettingsOtp(prefix){
+  const sendBtn = document.getElementById(`${prefix}SendOtpBtn`);
+  const confirmBtn = document.getElementById(`${prefix}ConfirmPwBtn`);
+  sendBtn.addEventListener("click", async ()=>{
+    hideAlert(`${prefix}PwAlert`); hideAlert(`${prefix}PwSuccess`);
+    try{
+      const { error } = await sb.auth.signInWithOtp({ email: state.currentProfile.email });
+      if (error) throw error;
+      document.getElementById(`${prefix}PwStep1`).classList.add("hidden");
+      document.getElementById(`${prefix}PwStep2`).classList.remove("hidden");
+      showAlert(`${prefix}PwSuccess`, t("success_otp_sent"));
+      document.getElementById(`${prefix}PwSuccess`).classList.remove("alert-error");
+    } catch(err){ showAlert(`${prefix}PwAlert`, err.message || t("err_generic")); }
+  });
+  confirmBtn.addEventListener("click", async ()=>{
+    hideAlert(`${prefix}PwAlert`);
+    const token = document.getElementById(`${prefix}OtpInput`).value.trim();
+    const newPw = document.getElementById(`${prefix}NewPwInput`).value;
+    if (!token || !newPw){ showAlert(`${prefix}PwAlert`, t("err_fill_fields")); return; }
+    try{
+      const { error: verifyError } = await sb.auth.verifyOtp({ email: state.currentProfile.email, token, type:"email" });
+      if (verifyError) throw verifyError;
+      const { error: updateError } = await sb.auth.updateUser({ password: newPw });
+      if (updateError) throw updateError;
+      showAlert(`${prefix}PwSuccess`, t("success_password_changed"));
+      document.getElementById(`${prefix}PwSuccess`).classList.remove("alert-error"); document.getElementById(`${prefix}PwSuccess`).classList.add("show");
+    } catch(err){ showAlert(`${prefix}PwAlert`, err.message || t("err_generic")); }
+  });
+}
+wireSettingsOtp("student"); wireSettingsOtp("teacher"); wireSettingsOtp("admin");
+
+["student","teacher"].forEach(role=>{
+  document.getElementById(`${role}NotifToggle`).addEventListener("change", async (e)=>{
+    await sb.from("profiles").update({ notifications_enabled: e.target.checked }).eq("id", state.currentProfile.id);
+  });
+});
+
+// -------------------- 20) بدء التشغيل --------------------
+(async function init(){
+  applyLanguage("ar");
+  await loadCoreData();
+  const { data: { session } } = await sb.auth.getSession();
+  if (session){
+    await afterLoginRouting(session.user);
+  } else {
+    goHome();
+  }
+})();
+</script>
+</body>
+</html>
